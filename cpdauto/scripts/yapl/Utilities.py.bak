@@ -22,7 +22,7 @@ def stringType(x):
   """
     Return True if the given object x is a string type, i.e., unicode string or "regular" string.
   """
-  isinstance(x, str)
+  isinstance(x, (str, unicode))
 #endDef
 
 
@@ -42,7 +42,7 @@ def toBoolean (arg):
   """
   if (not arg): return False
   if (arg == 1): return True
-  if (isinstance(arg, str)):
+  if (isinstance(arg, (str, unicode))):
     if (re.match('^(true|t|yes|y|1)$', arg, flags=re.IGNORECASE)): return True
     if (re.match('^(false|f|no|n|0)$', arg, flags=re.IGNORECASE)): return False
   #endIf
@@ -94,7 +94,7 @@ def getInputArgs(argsSignature,args=None):
   while (i < len(args)):
     keyword = args[i]
 
-    if (keyword not in argsSignature):
+    if (not argsSignature.has_key(keyword)):
       raise Exception("Unknown command line argument: %s" % keyword)
     
     if (keyword.startswith("--")):

@@ -1,4 +1,4 @@
-This is the introduction about how to use Cloud Pak for Data Installation Accelerator to accelerate the deployment of Cloud Pak for Data in real-world scenarios.
+This is the introduction about how to use Cloud Pak for Data Installation Accelerator to accelerate the deployment of Cloud Pak for Data in in various scenarios.
 
 # Values
 * Avoid human errors
@@ -6,17 +6,16 @@ This is the introduction about how to use Cloud Pak for Data Installation Accele
 * Improve the deployment experience 
 
 # Scenarios
-* Scenarios supported
-Install CPD 3.5 with the Portworx or NFS.
-**Note**
-* Scenarios to be supported
-Install CPD 3.5 with the OCS.
+* Scenarios supported </br>
+Install CPD 3.5 with the Portworx, OCS or NFS.
 # Prequisites
 The following prequisites have been met.
-* OpenShift 4.5 cluster with a cluster admin user is available
-* The Portworx or NFS storage class is ready
+* OpenShift 4.5/4.6 cluster with a cluster admin user is available
+* OpenShift image registry has been set up
+* The Portworx, OCS or NFS storage class is ready
 * CPD installer and installation files downloaded
 https://www.ibm.com/docs/en/cloud-paks/cp-data/3.5.0?topic=tasks-obtaining-installation-files
+* python3 and pip have been installed
 * Precheck has been done and passed successfully
 
 # Key artifacts
@@ -31,17 +30,20 @@ The following procedures are supposed to run in the Bastion node.
 https://github.com/IBM-ICP4D/Install_Precheck_CPD_v3
 
 ## 2.Install tools and libs
-* yum install -y python27
-* ln -s /usr/bin/python2.7 /usr/bin/python
-* python -m pip install configparser
-* yum install jq
+* yum install -y python3
+* ln -s /usr/bin/python3 /usr/bin/python
+* ln -s /usr/bin/pip3 /usr/bin/pip
+* pip install ./cpdauto/packages/configparser-4.0.2-py2.py3-none-any.whl
+* cp ./cpdauto/packages/jq-linux64 /usr/bin/jq
 
 [Installing Python and packages on an Offline Machine: A Comprehensive Guide](https://stackoverflow.com/questions/56853876/installing-python-2-7-16-and-packages-offline-concerns-with-dependencies)
 
 ## 3. Create the log directory
 mkdir -p /ibm/logs
 
-## 4.Prepare node settings
+## 4.Cluster settings
+### Timeout settings for OpenShift image registry
+`oc annotate route default-route default-route --overwrite haproxy.router.openshift.io/timeout=10m -n openshift-image-registry`
 
 ### Load balancer timeout settings
 As the load balancer have several options and sometimes it's not available to operate them directly, so the manual work is still needed.

@@ -141,7 +141,7 @@ class CPDInstall(object):
 
         litestart = Utilities.currentTimeMillis()
         TR.info(methodName,"Start installing Lite package")
-        self.installAssembliesAirgap("lite",icpdInstallLogFile)
+        self.installAssembliesAirgap("lite",self.default_load_from,icpdInstallLogFile)
         liteend = Utilities.currentTimeMillis()
         self.printTime(litestart, liteend, "Installing Lite")
 
@@ -153,27 +153,13 @@ class CPDInstall(object):
         except CalledProcessError as e:
             TR.error(methodName,"command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))    
 
-        if(self.installSpark == "True"):
-            TR.info(methodName,"Start installing Spark AE package")
-            sparkstart = Utilities.currentTimeMillis()
-            self.installAssembliesAirgap("spark",icpdInstallLogFile)
-            sparkend = Utilities.currentTimeMillis()
-            TR.info(methodName,"Spark AE  package installation completed")
-            self.printTime(sparkstart, sparkend, "Installing Spark AE")   
-
-        if(self.installDV == "True"):
-            TR.info(methodName,"Start installing DV package")
-            dvstart = Utilities.currentTimeMillis()
-            self.installAssembliesAirgap("dv",icpdInstallLogFile)
-            dvend = Utilities.currentTimeMillis()
-            TR.info(methodName,"DV package installation completed")
-            self.printTime(dvstart, dvend, "Installing DV")    
-        
         if(self.installWSL == "True"):
-
             TR.info(methodName,"Start installing WSL package")
             wslstart = Utilities.currentTimeMillis()
-            self.installAssembliesAirgap("wsl",icpdInstallLogFile)
+            if(self.installWSL_load_from == "NA"):
+                self.installAssembliesAirgap("wsl",self.default_load_from,icpdInstallLogFile)
+            else:
+                self.installAssembliesAirgap("wsl",self.installWSL_load_from,icpdInstallLogFile)
             wslend = Utilities.currentTimeMillis()
             TR.info(methodName,"WSL package installation completed")
             self.printTime(wslstart, wslend, "Installing WSL")
@@ -181,23 +167,21 @@ class CPDInstall(object):
         if(self.installWML == "True"):
             TR.info(methodName,"Start installing WML package")
             wmlstart = Utilities.currentTimeMillis()
-            self.installAssembliesAirgap("wml",icpdInstallLogFile)
+            if(self.installWML_load_from == "NA"):
+                self.installAssembliesAirgap("wml",self.default_load_from,icpdInstallLogFile)
+            else:
+                self.installAssembliesAirgap("wml",self.installWML_load_from,icpdInstallLogFile)
             wmlend = Utilities.currentTimeMillis()
             TR.info(methodName,"WML package installation completed")
             self.printTime(wmlstart, wmlend, "Installing WML")
-        
-        if(self.installWKC == "True"):
-            TR.info(methodName,"Start installing WKC package")
-            wkcstart = Utilities.currentTimeMillis()
-            self.installAssembliesAirgap("wkc",icpdInstallLogFile)
-            wkcend = Utilities.currentTimeMillis()
-            TR.info(methodName,"WKC package installation completed")
-            self.printTime(wkcstart, wkcend, "Installing WKC")
 
         if(self.installOSWML == "True"):
             TR.info(methodName,"Start installing AI Openscale package")
             aiostart = Utilities.currentTimeMillis()
-            self.installAssembliesAirgap("aiopenscale",icpdInstallLogFile)
+            if(self.installOSWML_load_from == "NA"):
+                self.installAssembliesAirgap("aiopenscale",self.default_load_from,icpdInstallLogFile)
+            else:
+                self.installAssembliesAirgap("aiopenscale",self.installOSWML_load_from,icpdInstallLogFile)
             aioend = Utilities.currentTimeMillis()
             TR.info(methodName,"AI Openscale package installation completed")
             self.printTime(aiostart, aioend, "Installing AI Openscale")    
@@ -205,7 +189,10 @@ class CPDInstall(object):
         if(self.installCDE == "True"):
             TR.info(methodName,"Start installing Cognos Dashboard package")
             cdestart = Utilities.currentTimeMillis()
-            self.installAssembliesAirgap("cde",icpdInstallLogFile)
+            if(self.installCDE_load_from == "NA"):
+                self.installAssembliesAirgap("cde",self.default_load_from,icpdInstallLogFile)
+            else:
+                self.installAssembliesAirgap("cde",self.installCDE_load_from,icpdInstallLogFile)
             cdeend = Utilities.currentTimeMillis()
             TR.info(methodName,"Cognos Dashboard package installation completed")
             self.printTime(cdestart, cdeend, "Installing Cognos Dashboard")  
@@ -214,7 +201,10 @@ class CPDInstall(object):
         if(self.installRStudio == "True"):
             TR.info(methodName,"Start installing RStudio package")
             rstudiostart = Utilities.currentTimeMillis()
-            self.installAssembliesAirgap("rstudio",icpdInstallLogFile)
+            if(self.installRStudio_load_from == "NA"):
+                self.installAssembliesAirgap("rstudio",self.default_load_from,icpdInstallLogFile)
+            else:
+                self.installAssembliesAirgap("rstudio",self.installRStudio_load_from,icpdInstallLogFile)
             rstudioend = Utilities.currentTimeMillis()
             TR.info(methodName,"RStudio package installation completed")
             self.printTime(rstudiostart, rstudioend, "Installing RStudio")      
@@ -222,23 +212,32 @@ class CPDInstall(object):
         if(self.installSPSS == "True"):
             TR.info(methodName,"Start installing SPSS package")
             spssstart = Utilities.currentTimeMillis()
-            self.installAssembliesAirgap("spss-modeler",icpdInstallLogFile)
+            if(self.installSPSS_load_from == "NA"):
+                self.installAssembliesAirgap("spss-modeler",self.default_load_from,icpdInstallLogFile)
+            else:
+                self.installAssembliesAirgap("spss-modeler",self.installSPSS_load_from,icpdInstallLogFile)
             spssend = Utilities.currentTimeMillis()
             TR.info(methodName,"SPSS package installation completed")
             self.printTime(spssstart, spssend, "Installing SPSS")
-        
-        if(self.installStreams == "True"):
-            TR.info(methodName,"Start installing Streams package")
-            streamsstart = Utilities.currentTimeMillis()
-            self.installAssembliesAirgap("streams",icpdInstallLogFile)
-            streamssend = Utilities.currentTimeMillis()
-            TR.info(methodName,"Streams package installation completed")
-            self.printTime(streamsstart, streamsend, "Installing Streams")
 
-        if(self.installRuntimeGPUPy36 == "True"):
-            TR.info(methodName,"Start installing GPUPy36 package")
+        if(self.installSpark == "True"):
+            TR.info(methodName,"Start installing Spark AE package")
+            sparkstart = Utilities.currentTimeMillis()
+            if(self.installSpark_load_from == "NA"):
+                self.installAssembliesAirgap("spark",self.default_load_from,icpdInstallLogFile)
+            else:
+                self.installAssembliesAirgap("spark",self.installSpark_load_from,icpdInstallLogFile)
+            sparkend = Utilities.currentTimeMillis()
+            TR.info(methodName,"Spark AE  package installation completed")
+            self.printTime(sparkstart, sparkend, "Installing Spark AE")     
+
+        if(self.installRuntimeGPUPy37 == "True"):
+            TR.info(methodName,"Start installing GPUPy37 package")
             gpupy36start = Utilities.currentTimeMillis()
-            self.installAssembliesAirgap("runtime-addon-gpupy36",icpdInstallLogFile)
+            if(self.installRuntimeGPUPy37_load_from == "NA"):
+                self.installAssembliesAirgap("runtime-addon-py37gpu",self.default_load_from,icpdInstallLogFile)
+            else:
+                self.installAssembliesAirgap("runtime-addon-py37gpu",self.installRuntimeGPUPy37_load_from,icpdInstallLogFile)
             gpupy36end = Utilities.currentTimeMillis()
             TR.info(methodName,"GPUPy36 package installation completed")
             self.printTime(gpupy36start, gpupy36end, "Installing GPUPy36")
@@ -246,7 +245,10 @@ class CPDInstall(object):
         if(self.installRuntimeR36 == "True"):
             TR.info(methodName,"Start installing RuntimeR36 package")
             r36start = Utilities.currentTimeMillis()
-            self.installAssembliesAirgap("runtime-addon-r36",icpdInstallLogFile)
+            if(self.installRuntimeR36_load_from == "NA"):
+                self.installAssembliesAirgap("runtime-addon-py37gpu",self.default_load_from,icpdInstallLogFile)
+            else:
+                self.installAssembliesAirgap("runtime-addon-r36",self.installRuntimeR36_load_from,icpdInstallLogFile)
             r36end = Utilities.currentTimeMillis()
             TR.info(methodName,"R36 package installation completed")
             self.printTime(r36start, r36end, "Installing R36")
@@ -254,7 +256,10 @@ class CPDInstall(object):
         if(self.installHEE == "True"):
             TR.info(methodName,"Start installing HEE package")
             heestart = Utilities.currentTimeMillis()
-            self.installAssembliesAirgap("hadoop-addon",icpdInstallLogFile)
+            if(self.installHEE_load_from == "NA"):
+                self.installAssembliesAirgap("hadoop-addon",self.default_load_from,icpdInstallLogFile)
+            else:
+                self.installAssembliesAirgap("hadoop-addon",self.installHEE_load_from,icpdInstallLogFile)
             heeend = Utilities.currentTimeMillis()
             TR.info(methodName,"HEE package installation completed")
             self.printTime(heestart, heeend, "Installing HEE")
@@ -262,18 +267,46 @@ class CPDInstall(object):
         if(self.installDODS == "True"):
             TR.info(methodName,"Start installing DODS package")
             dodsstart = Utilities.currentTimeMillis()
-            self.installAssembliesAirgap("dods",icpdInstallLogFile)
+            if(self.installDODS_load_from == "NA"):
+                self.installAssembliesAirgap("dods",self.default_load_from,icpdInstallLogFile)
+            else:
+                self.installAssembliesAirgap("dods",self.installDODS_load_from,icpdInstallLogFile)
             dodsend = Utilities.currentTimeMillis()
             TR.info(methodName,"DODS package installation completed")
-            self.printTime(dodsstart, dodsend, "Installing DODS")
+            self.printTime(dodsstart, dodsend, "Installing DODS") 
+
+        if(self.installWKC == "True"):
+            TR.info(methodName,"Start installing WKC package")
+            wkcstart = Utilities.currentTimeMillis()
+            if(self.installWKC_load_from == "NA"):
+                self.installAssembliesAirgap("wkc",self.default_load_from,icpdInstallLogFile)
+            else:
+                self.installAssembliesAirgap("wkc",self.installWKC_load_from,icpdInstallLogFile)            
+            wkcend = Utilities.currentTimeMillis()
+            TR.info(methodName,"WKC package installation completed")
+            self.printTime(wkcstart, wkcend, "Installing WKC")
         
-        if(self.installOSG == "True"):
-            TR.info(methodName,"Start installing OSG package")
-            osgstart = Utilities.currentTimeMillis()
-            self.installAssembliesAirgap("osg",icpdInstallLogFile)
-            osgsend = Utilities.currentTimeMillis()
-            TR.info(methodName,"OSG package installation completed")
-            self.printTime(osgstart, osgend, "Installing OSG")
+        if(self.installStreams == "True"):
+            TR.info(methodName,"Start installing Streams package")
+            streamsstart = Utilities.currentTimeMillis()
+            if(self.installStreams_load_from == "NA"):
+                self.installAssembliesAirgap("streams",self.default_load_from,icpdInstallLogFile)
+            else:
+                self.installAssembliesAirgap("streams",self.installStreams_load_from,icpdInstallLogFile)   
+            streamssend = Utilities.currentTimeMillis()
+            TR.info(methodName,"Streams package installation completed")
+            self.printTime(streamsstart, streamsend, "Installing Streams")
+            
+        if(self.installDV == "True"):
+            TR.info(methodName,"Start installing DV package")
+            dvstart = Utilities.currentTimeMillis()
+            if(self.installDV_load_from == "NA"):
+                self.installAssembliesAirgap("dv",self.default_load_from,icpdInstallLogFile)
+            else:
+                self.installAssembliesAirgap("dv",self.installDV_load_from,icpdInstallLogFile)   
+            dvend = Utilities.currentTimeMillis()
+            TR.info(methodName,"DV package installation completed")
+            self.printTime(dvstart, dvend, "Installing DV")      
 
 
         TR.info(methodName,"Installed all packages.")
@@ -327,12 +360,13 @@ class CPDInstall(object):
         except CalledProcessError as e:
             TR.error(methodName,"command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))    
         
+        TR.info(methodName,"oc login successfully")
 
         crio_conf   = "./templates/cpd/crio.conf"
         crio_mc     = "./templates/cpd/crio-mc.yaml"
         
-        
-        crio_config_data = base64.b64encode(self.readFileContent(crio_conf))
+        crio_config_data = base64.b64encode(self.readFileContent(crio_conf).encode('ascii')).decode("ascii")
+        TR.info(methodName,"encode crio.conf to be base64 string")
         self.updateTemplateFile(crio_mc, '${crio-config-data}', crio_config_data)
 
         create_crio_mc  = "oc create -f "+crio_mc
@@ -393,7 +427,7 @@ class CPDInstall(object):
         """
         methodName = "installAssemblies"
 
-        registry = self.regsitry+"/"+self.namespace
+        registry = self.regsitry.decode("ascii")+"/"+self.namespace
         apply_cmd = self.installer_path + " adm -r " + self.repo_path + " -a "+assembly+"  -n " + self.namespace+" --accept-all-licenses --apply | tee /ibm/logs/"+assembly+"_apply.log"
         TR.info(methodName,"Execute apply command for assembly %s"%apply_cmd)
         try:
@@ -402,7 +436,24 @@ class CPDInstall(object):
         except CalledProcessError as e:
             TR.error(methodName,"command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))
 
-        install_cmd = self.installer_path + " install --storageclass " + self.storage_class + " --override-config portworx -r " + self.repo_path + " --assembly "+assembly+" --arch x86_64 -n "+self.namespace+" --transfer-image-to "+registry+" --cluster-pull-username="+ self.ocp_admin_user + " --cluster-pull-password="+self.ocToken+" --cluster-pull-prefix image-registry.openshift-image-registry.svc:5000/"+self.namespace+" --accept-all-licenses --insecure-skip-tls-verify | tee "+self.log_dir +"/" +assembly+"_install.log"
+        #install
+        TR.info("debug","self.storage_type= %s" %self.storage_type)
+        TR.info("debug","self.storage_class= %s" %self.storage_class)
+        
+        if(self.storage_type == "portworx"):
+            install_cmd = self.installer_path + " install --storageclass " + self.storage_class + " --override-config portworx -r " + self.repo_path + " --assembly "+assembly+" --arch x86_64 -n "+self.namespace+" --transfer-image-to "+registry+" --cluster-pull-username="+ self.ocp_admin_user + " --cluster-pull-password="+self.ocToken.decode("ascii")+" --cluster-pull-prefix image-registry.openshift-image-registry.svc:5000/"+self.namespace+" --accept-all-licenses --insecure-skip-tls-verify | tee "+self.log_dir +"/" +assembly+"_install.log"
+            install_cmd_for_print = install_cmd = self.installer_path + " install --storageclass " + self.storage_class + " --override-config portworx -r " + self.repo_path + " --assembly "+assembly+" --arch x86_64 -n "+self.namespace+" --transfer-image-to "+registry+" --cluster-pull-username="+ self.ocp_admin_user + " --cluster-pull-password="+base64.b64encode(self.ocToken).decode("ascii")+" --cluster-pull-prefix image-registry.openshift-image-registry.svc:5000/"+self.namespace+" --accept-all-licenses --insecure-skip-tls-verify | tee "+self.log_dir +"/" +assembly+"_install.log"
+            TR.info(methodName,"Execute install command for assembly %s"%install_cmd_for_print)    
+        elif(self.storage_type == "ocs"):
+            install_cmd = self.installer_path + " install --storageclass " + self.storage_class + " --override-config ocs -r " + self.repo_path + " --assembly "+assembly+" --arch x86_64 -n "+self.namespace+" --transfer-image-to "+registry+" --cluster-pull-username="+ self.ocp_admin_user + " --cluster-pull-password="+self.ocToken.decode("ascii")+" --cluster-pull-prefix image-registry.openshift-image-registry.svc:5000/"+self.namespace+" --accept-all-licenses --insecure-skip-tls-verify | tee "+self.log_dir +"/" +assembly+"_install.log"
+            install_cmd_for_print = self.installer_path + " install --storageclass " + self.storage_class + " --override-config ocs -r " + self.repo_path + " --assembly "+assembly+" --arch x86_64 -n "+self.namespace+" --transfer-image-to "+registry+" --cluster-pull-username="+ self.ocp_admin_user + " --cluster-pull-password="+base64.b64encode(self.ocToken).decode("ascii")+" --cluster-pull-prefix image-registry.openshift-image-registry.svc:5000/"+self.namespace+" --accept-all-licenses --insecure-skip-tls-verify | tee "+self.log_dir +"/" +assembly+"_install.log"
+            TR.info(methodName,"Execute install command for assembly %s"%install_cmd_for_print)
+        elif(self.storage_type == "nfs"):
+            install_cmd = self.installer_path + " install --storageclass " + self.storage_class + " -r " + self.repo_path + " --assembly "+assembly+" --arch x86_64 -n "+self.namespace+" --transfer-image-to "+registry+" --cluster-pull-username="+ self.ocp_admin_user + " --cluster-pull-password="+self.ocToken.decode("ascii")+" --cluster-pull-prefix image-registry.openshift-image-registry.svc:5000/"+self.namespace+" --accept-all-licenses --insecure-skip-tls-verify | tee "+self.log_dir +"/" +assembly+"_install.log"
+            install_cmd_for_print = self.installer_path + " install --storageclass " + self.storage_class + " -r " + self.repo_path + " --assembly "+assembly+" --arch x86_64 -n "+self.namespace+" --transfer-image-to "+registry+" --cluster-pull-username="+ self.ocp_admin_user + " --cluster-pull-password="+base64.b64encode(self.ocToken).decode("ascii")+" --cluster-pull-prefix image-registry.openshift-image-registry.svc:5000/"+self.namespace+" --accept-all-licenses --insecure-skip-tls-verify | tee "+self.log_dir +"/" +assembly+"_install.log"
+            TR.info(methodName,"Execute install command for assembly %s"%install_cmd_for_print)
+        else:
+            TR.error(methodName,"Invalid storage type : %s"%self.storage_type)
 
         try:     
             retcode = call(install_cmd,shell=True, stdout=icpdInstallLogFile)
@@ -411,7 +462,7 @@ class CPDInstall(object):
             TR.error(methodName,"Exception while installing service %s with message %s" %(assembly,e))
             self.rc = 1
 
-    def installAssembliesAirgap(self, assembly, icpdInstallLogFile):
+    def installAssembliesAirgap(self, assembly, load_from_path, icpdInstallLogFile):
         """
         method to install assemlies
         for each assembly this method will execute adm command to apply all prerequistes
@@ -420,27 +471,45 @@ class CPDInstall(object):
         """
         methodName = "installAssembliesAirgap"
 
-        registry = self.regsitry+"/"+self.namespace
+        registry = self.regsitry.decode("ascii")+"/"+self.namespace
   
-        
-        push_cmd = self.installer_path + " preload-images --assembly " + assembly + " --action push --load-from " + self.load_from + " --transfer-image-to " + registry + " --target-registry-username "+ self.ocp_admin_user + " --target-registry-password "+ self.ocToken + " --insecure-skip-tls-verify --accept-all-licenses | tee "+self.log_dir +"/"+assembly+"_push.log"
-        TR.info(methodName,"Execute push command for assembly %s"%push_cmd)
+        #push
+        push_cmd = self.installer_path + " preload-images --assembly " + assembly + " --action push --load-from " + load_from_path + " --transfer-image-to " + registry + " --target-registry-username "+ self.ocp_admin_user + " --target-registry-password "+ self.ocToken.decode("ascii") + " --insecure-skip-tls-verify --accept-all-licenses | tee "+self.log_dir +"/"+assembly+"_push.log"
+        push_cmd_for_print = self.installer_path + " preload-images --assembly " + assembly + " --action push --load-from " + load_from_path + " --transfer-image-to " + registry + " --target-registry-username "+ self.ocp_admin_user + " --target-registry-password " + base64.b64encode(self.ocToken).decode("ascii") + " --insecure-skip-tls-verify --accept-all-licenses | tee "+self.log_dir +"/"+assembly+"_push.log"
+        TR.info(methodName,"Execute push command for assembly %s"%push_cmd_for_print)
         try:
             retcode = call(push_cmd,shell=True, stdout=icpdInstallLogFile)
             TR.info(methodName,"Executed push command for assembly %s returned %s"%(assembly,retcode))
         except CalledProcessError as e:
             TR.error(methodName,"command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))
-
-        apply_cmd = self.installer_path +" adm --assembly " + assembly + " --latest-dependency -n "+self.namespace+ " --load-from " + self.load_from + " --accept-all-licenses --apply | tee "+self.log_dir +"/"+assembly+"_apply.log"
+        
+        #apply
+        apply_cmd = self.installer_path +" adm --assembly " + assembly + " --latest-dependency -n "+self.namespace+ " --load-from " + load_from_path + " --accept-all-licenses --apply | tee "+self.log_dir +"/"+assembly+"_apply.log"
         TR.info(methodName,"Execute apply command for assembly %s"%apply_cmd)
         try:
             retcode = call(apply_cmd,shell=True, stdout=icpdInstallLogFile)
             TR.info(methodName,"Executed apply command for assembly %s returned %s"%(assembly,retcode))
         except CalledProcessError as e:
             TR.error(methodName,"command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))
-
-        install_cmd = self.installer_path + " install --assembly " + assembly + " --latest-dependency --arch x86_64 -n " + self.namespace + " --storageclass " + self.storage_class + " --override-config portworx --load-from " + self.load_from +" --cluster-pull-username " +self.ocp_admin_user + " --cluster-pull-password " + self.ocToken + " --cluster-pull-prefix image-registry.openshift-image-registry.svc:5000/" + self.namespace + " --verbose --accept-all-licenses --insecure-skip-tls-verify | tee "+self.log_dir +"/"+assembly+"_install.log"
-        TR.info(methodName,"Execute install command for assembly %s"%install_cmd)
+        
+        #install
+        TR.info("debug","self.storage_type= %s" %self.storage_type)
+        TR.info("debug","self.storage_class= %s" %self.storage_class)
+        
+        if(self.storage_type == "portworx"):
+            install_cmd = self.installer_path + " install --assembly " + assembly + " --latest-dependency --arch x86_64 -n " + self.namespace + " --storageclass " + self.storage_class + " --override-config portworx --load-from " + load_from_path +" --cluster-pull-username " +self.ocp_admin_user + " --cluster-pull-password " + self.ocToken.decode("ascii") + " --cluster-pull-prefix image-registry.openshift-image-registry.svc:5000/" + self.namespace + " --verbose --accept-all-licenses --insecure-skip-tls-verify | tee "+self.log_dir +"/"+assembly+"_install.log"
+            install_cmd_for_print = self.installer_path + " install --assembly " + assembly + " --latest-dependency --arch x86_64 -n " + self.namespace + " --storageclass " + self.storage_class + " --override-config portworx --load-from " + load_from_path +" --cluster-pull-username " +self.ocp_admin_user + " --cluster-pull-password " + base64.b64encode(self.ocToken).decode("ascii") + " --cluster-pull-prefix image-registry.openshift-image-registry.svc:5000/" + self.namespace + " --verbose --accept-all-licenses --insecure-skip-tls-verify | tee "+self.log_dir +"/"+assembly+"_install.log"
+            TR.info(methodName,"Execute install command for assembly %s"%install_cmd_for_print)    
+        elif(self.storage_type == "ocs"):
+            install_cmd = self.installer_path + " install --assembly " + assembly + " --latest-dependency --arch x86_64 -n " + self.namespace + " --storageclass " + self.storage_class + " --override-config ocs --load-from " + load_from_path +" --cluster-pull-username " +self.ocp_admin_user + " --cluster-pull-password " + self.ocToken.decode("ascii") + " --cluster-pull-prefix image-registry.openshift-image-registry.svc:5000/" + self.namespace + " --verbose --accept-all-licenses --insecure-skip-tls-verify | tee "+self.log_dir +"/"+assembly+"_install.log"
+            install_cmd_for_print = self.installer_path + " install --assembly " + assembly + " --latest-dependency --arch x86_64 -n " + self.namespace + " --storageclass " + self.storage_class + " --override-config ocs --load-from " + load_from_path +" --cluster-pull-username " +self.ocp_admin_user + " --cluster-pull-password " + base64.b64encode(self.ocToken).decode("ascii")+ " --cluster-pull-prefix image-registry.openshift-image-registry.svc:5000/" + self.namespace + " --verbose --accept-all-licenses --insecure-skip-tls-verify | tee "+self.log_dir +"/"+assembly+"_install.log"
+            TR.info(methodName,"Execute install command for assembly %s"%install_cmd_for_print)
+        elif(self.storage_type == "nfs"):
+            install_cmd = self.installer_path + " install --assembly " + assembly + " --latest-dependency --arch x86_64 -n " + self.namespace + " --storageclass " + self.storage_class + " --load-from " + load_from_path +" --cluster-pull-username " +self.ocp_admin_user + " --cluster-pull-password " + self.ocToken.decode("ascii") + " --cluster-pull-prefix image-registry.openshift-image-registry.svc:5000/" + self.namespace + " --verbose --accept-all-licenses --insecure-skip-tls-verify | tee "+self.log_dir +"/"+assembly+"_install.log"
+            install_cmd_for_print = self.installer_path + " install --assembly " + assembly + " --latest-dependency --arch x86_64 -n " + self.namespace + " --storageclass " + self.storage_class + " --load-from " + load_from_path +" --cluster-pull-username " +self.ocp_admin_user + " --cluster-pull-password " + base64.b64encode(self.ocToken).decode("ascii") + " --cluster-pull-prefix image-registry.openshift-image-registry.svc:5000/" + self.namespace + " --verbose --accept-all-licenses --insecure-skip-tls-verify | tee "+self.log_dir +"/"+assembly+"_install.log"
+            TR.info(methodName,"Execute install command for assembly %s"%install_cmd_for_print)
+        else:
+            TR.error(methodName,"Invalid storage type : %s"%self.storage_type)
         try:
             retcode = call(install_cmd,shell=True, stdout=icpdInstallLogFile)
             TR.info(methodName,"Executed install command for assembly %s returned %s"%(assembly,retcode))
@@ -510,32 +579,47 @@ class CPDInstall(object):
         config = configparser.ConfigParser()
         config.read('../cpd_install.conf')
 
-        self.ocp_admin_user = config['install']['ocp_admin_user']
-        self.ocp_admin_password = config['install']['ocp_admin_password']
-        self.load_from = config['install']['load_from']
-        self.log_dir = config['install']['log_dir']
-        self.overall_log_file = config['install']['overall_log_file']
-        self.installer_path = config['install']['installer_path']
-        self.repo_path = config['install']['repo_path']
-        self.installWSL = config['install']['installWSL']
-        self.installWML = config['install']['installWML']
-        self.installWKC = config['install']['installWKC']
-        self.installSpark = config['install']['installSpark']
-        self.installCDE = config['install']['installCDE']
-        self.installDV = config['install']['installDV']
-        self.installOSWML = config['install']['installOSWML']
-        self.installRStudio = config['install']['installRStudio']
-        self.installSPSS = config['install']['installSPSS']
-        self.installStreams = config['install']['installStreams']
-        self.installRuntimeGPUPy36 = config['install']['installRuntimeGPUPy36']
-        self.installRuntimeR36 = config['install']['installRuntimeR36']
-        self.installHEE = config['install']['installHEE']
-        self.installDODS = config['install']['installDODS']
-        self.installOSG = config['install']['installOSG']
-        self.storage_class = config['install']['storage_class']        
-        self.namespace = config['install']['namespace']
+        self.ocp_admin_user = config['ocp_cred']['ocp_admin_user'].strip()
+        self.ocp_admin_password = config['ocp_cred']['ocp_admin_password'].strip()
+        self.change_node_settings = config['settings']['change_node_settings'].strip()
+        self.default_load_from = config['cpd_assembly']['default_load_from'].strip()
+        self.log_dir = config['cpd_assembly']['log_dir'].strip()
+        self.overall_log_file = config['cpd_assembly']['overall_log_file'].strip()
+        self.installer_path = config['cpd_assembly']['installer_path'].strip()
+        self.repo_path = config['cpd_assembly']['repo_path'].strip()
+        self.installWSL = config['cpd_assembly']['installWSL'].strip()
+        self.installWSL_load_from = config['cpd_assembly']['installWSL_load_from'].strip()
+        self.installWML = config['cpd_assembly']['installWML'].strip()
+        self.installWML_load_from = config['cpd_assembly']['installWML_load_from'].strip()
+        self.installWKC = config['cpd_assembly']['installWKC'].strip()
+        self.installWKC_load_from = config['cpd_assembly']['installWKC_load_from'].strip()
+        self.installSpark = config['cpd_assembly']['installSpark'].strip()
+        self.installSpark_load_from = config['cpd_assembly']['installSpark_load_from'].strip()
+        self.installCDE = config['cpd_assembly']['installCDE'].strip()
+        self.installCDE_load_from = config['cpd_assembly']['installCDE_load_from'].strip()
+        self.installDV = config['cpd_assembly']['installDV'].strip()
+        self.installDV_load_from = config['cpd_assembly']['installDV_load_from'].strip()
+        self.installOSWML = config['cpd_assembly']['installOSWML'].strip()
+        self.installOSWML_load_from = config['cpd_assembly']['installOSWML_load_from'].strip()
+        self.installRStudio = config['cpd_assembly']['installRStudio'].strip()
+        self.installRStudio_load_from = config['cpd_assembly']['installRStudio_load_from'].strip()
+        self.installSPSS = config['cpd_assembly']['installSPSS'].strip()
+        self.installSPSS_load_from = config['cpd_assembly']['installSPSS_load_from'].strip()       
+        self.installStreams = config['cpd_assembly']['installStreams'].strip()
+        self.installStreams_load_from = config['cpd_assembly']['installStreams_load_from'].strip()  
+        self.installRuntimeGPUPy37 = config['cpd_assembly']['installRuntimeGPUPy37'].strip()
+        self.installRuntimeGPUPy37_load_from = config['cpd_assembly']['installRuntimeGPUPy37_load_from'].strip()  
+        self.installRuntimeR36 = config['cpd_assembly']['installRuntimeR36'].strip()
+        self.installRuntimeR36_load_from = config['cpd_assembly']['installRuntimeR36_load_from'].strip() 
+        self.installHEE = config['cpd_assembly']['installHEE'].strip()
+        self.installHEE_load_from = config['cpd_assembly']['installHEE_load_from'].strip() 
+        self.installDODS = config['cpd_assembly']['installDODS'].strip()
+        self.installDODS_load_from = config['cpd_assembly']['installDODS_load_from'].strip()
+        self.storage_type = config['cpd_assembly']['storage_type'].strip()    
+        self.storage_class = config['cpd_assembly']['storage_class'].strip()        
+        self.namespace = config['cpd_assembly']['namespace'].strip()
         TR.info(methodName,"Load installation configuration completed")
-        TR.info(methodName,"Installation configuration:" + self.ocp_admin_user + "-" + self.ocp_admin_password  + "-" + self.installer_path + "-" + self.installWSL)
+        TR.info(methodName,"Installation configuration:" + self.ocp_admin_user + "-" + self.ocp_admin_password  + "-" + self.installer_path)
     #endDef
 
     def main(self,argv):
@@ -553,37 +637,53 @@ class CPDInstall(object):
 
             with open(logFilePath,"a+") as icpdInstallLogFile:  
                 ocpstart = Utilities.currentTimeMillis()
-                self.changeNodeSettings(icpdInstallLogFile)
-                TR.info("debug","Finishd the node settings")
-                ocpend = Utilities.currentTimeMillis()
-                self.printTime(ocpstart, ocpend, "Chaning node settings")
+                TR.info("debug","change_node_settings= %s" %self.change_node_settings)
+                if(self.change_node_settings == "True"):
+                    self.changeNodeSettings(icpdInstallLogFile)
+                    TR.info("debug","Finishd the node settings")
+                    ocpend = Utilities.currentTimeMillis()
+                    self.printTime(ocpstart, ocpend, "Chaning node settings")
 
                 if(self.installOSWML == "True"):
                     self.installWML="True"
                 
+                TR.info("debug","default_load_from= %s" %self.default_load_from)
                 TR.info("debug","installWKC= %s" %self.installWKC)
+                TR.info("debug","installWKC_load_from= %s" %self.installWKC_load_from)
                 TR.info("debug","installWSL= %s" %self.installWSL)
+                TR.info("debug","installWSL_load_from= %s" %self.installWSL_load_from)
                 TR.info("debug","installDV= %s" %self.installDV)
+                TR.info("debug","installDV_load_from= %s" %self.installDV_load_from)
                 TR.info("debug","installWML= %s" %self.installWML)
+                TR.info("debug","installWML_load_from= %s" %self.installWML_load_from)
                 TR.info("debug","installOSWML= %s" %self.installOSWML)
+                TR.info("debug","installOSWML_load_from= %s" %self.installOSWML_load_from)
                 TR.info("debug","installCDE= %s" %self.installCDE)
+                TR.info("debug","installCDE_load_from= %s" %self.installCDE_load_from)
                 TR.info("debug","installSpark= %s" %self.installSpark)
+                TR.info("debug","installSpark_load_from= %s" %self.installSpark_load_from)
                 TR.info("debug","installRStudio= %s" %self.installRStudio)
+                TR.info("debug","installRStudio_load_from= %s" %self.installRStudio_load_from)
                 TR.info("debug","installSPSS= %s" %self.installSPSS)
+                TR.info("debug","installSPSS_load_from= %s" %self.installSPSS_load_from)
                 TR.info("debug","installStreams= %s" %self.installStreams)
-                TR.info("debug","installRuntimeGPUPy36= %s" %self.installRuntimeGPUPy36)
+                TR.info("debug","installStreams_load_from= %s" %self.installStreams_load_from)
+                TR.info("debug","installRuntimeGPUPy37= %s" %self.installRuntimeGPUPy37)
+                TR.info("debug","installRuntimeGPUPy37_load_from= %s" %self.installRuntimeGPUPy37_load_from)
                 TR.info("debug","installRuntimeR36= %s" %self.installRuntimeR36)
+                TR.info("debug","installRuntimeR36_load_from= %s" %self.installRuntimeR36_load_from)
                 TR.info("debug","installHEE= %s" %self.installHEE)
+                TR.info("debug","installHEE_load_from= %s" %self.installHEE_load_from)
                 TR.info("debug","installDODS= %s" %self.installDODS)
-                TR.info("debug","installOSG= %s" %self.installOSG)
+                TR.info("debug","installDODS_load_from= %s" %self.installDODS_load_from)
 
                
                 getTokenCmd = "oc whoami -t"
 
                 try:
                     self.ocToken = check_output(['bash','-c', getTokenCmd])
-                    self.ocToken = self.ocToken.strip('\n')
-                    TR.info(methodName,"Completed %s command with return value %s" %(getTokenCmd,self.ocToken))
+                    self.ocToken = self.ocToken.strip('\n'.encode('ascii'))
+                    TR.info(methodName,"Completed %s command with return value (encoded) %s" %(getTokenCmd,base64.b64encode(self.ocToken))
                 except CalledProcessError as e:
                     TR.error(methodName,"command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))
 

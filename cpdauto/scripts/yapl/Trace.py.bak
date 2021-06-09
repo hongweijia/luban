@@ -1083,9 +1083,9 @@ class Trace:
     if (not Trace.traceFile or eventType in ["S", "E", "W", "I"]):
       # Send severe, error, warning and info trace to stdout
       if (stackDump):
-        print(("%s : %s\n%s" % (traceString, msg, stackDump)))
+        print("%s : %s\n%s" % (traceString, msg, stackDump))
       else:
-        print(("%s : %s" % (traceString, msg)))
+        print("%s : %s" % (traceString, msg))
       #endIf
     #endIf
   #endDef
