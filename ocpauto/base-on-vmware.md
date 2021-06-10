@@ -1,6 +1,6 @@
 # vmware_ocp_auto_install
 
-The instruction in this repository is based on https://github.com/IBM-ICP4D/cloud-pak-ocp-4 which provides general guide on how to install Red Hat OpenShift 4.x(OCP) on VMWare or Bare Metal. But if you need to deploy multiple OCP environments without internet access, manually preparing air gapped registry and bastion node every time is tedious, time-consuming and error-prone. This instruction targets to resolve the problem, it provides best practice on:
+The instruction in this repository is based on https://github.com/IBM-ICP4D/cloud-pak-ocp-4 which provides general guide on how to install Red Hat OpenShift 4.x(OCP) on VMWare or Bare Metal. It's developed and opened at external github by IBM team.Please git clone scripts to local and follow this guide to go on the deployment.But if you need to deploy multiple OCP environments without internet access, manually preparing air gapped registry and bastion node every time is tedious, time-consuming and error-prone. This instruction targets to resolve the problem, it provides best practice on:
 * How to build 2in1 OVA template which includes air gapped registry and bastion node
 * How to deploy OCP quickly on VMware leveraging above 2in1 OVA template
 
