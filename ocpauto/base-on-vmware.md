@@ -1,6 +1,6 @@
 # vmware_ocp_auto_install
 
-The instruction in this repository is based on https://github.com/IBM-ICP4D/cloud-pak-ocp-4 which provides general guide on how to install Red Hat OpenShift 4.x(OCP) on VMWare or Bare Metal. It's developed and opened at external github by IBM team.Please git clone scripts to local and follow this guide to go on the deployment.But if you need to deploy multiple OCP environments without internet access, manually preparing air gapped registry and bastion node every time is tedious, time-consuming and error-prone. This instruction targets to resolve the problem, it provides best practice on:
+The instruction in this repository is based on https://github.com/IBM-ICP4D/cloud-pak-ocp-4 which provides general guide on how to install Red Hat OpenShift 4.x(OCP) on VMWare or Bare Metal. But if you need to deploy multiple OCP environments without internet access, manually preparing air gapped registry and bastion node every time is tedious, time-consuming and error-prone. This instruction targets to resolve the problem, it provides best practice on:
 * How to build 2in1 OVA template which includes air gapped registry and bastion node
 * How to deploy OCP quickly on VMware leveraging above 2in1 OVA template
 
@@ -15,7 +15,7 @@ The instruction in this repository is based on https://github.com/IBM-ICP4D/clou
 ## Prerequisites
 * FQDN and DNS records for the cluster and OCP nodes are ready, including bastion, bootstrap, master, and worker nodes. If you need to access the nodes from outside the cluster, please register DNS records into an external DNS server.
     * The FQDN format should be ```<host_name>.<cluster_name>.<domain_name>```, while the VM name displayed in vCenter Server will be ```<cluster_name>-<host_name>```, but the VM name does not impact DNS resolving.
-        eg. If your domain_name is ```cdl.ibm.com``` and cluster_name is ```ocp46```, the FQDN and DNS record for a master node will be ```master01.ocp46.cdl.ibm.com```, and the VM name will be ```ocp46-master01```.
+        eg. If your domain_name is ```test.abc.com``` and cluster_name is ```ocp46```, the FQDN and DNS record for a master node will be ```master01.ocp46.test.abc.com```, and the VM name will be ```ocp46-master01```.
     * Besides the bastion, bootstrap, master, and worker nodes, please also register the following records into DNS, with the same IP address as the bastion node:
         ```
         api.<cluster_name>.<domain_name>    <bastion IP>
@@ -54,7 +54,7 @@ Or if you have got the 2in1 OVA template of the air gapped registry & bastion no
     ```
     <ip address> <FQDN of this server> download.<domain_name> registry.<domain_name>
     ---
-    eg. 9.1.1.2 bastion.cdl.ibm.com download.cdl.ibm.com registry.cdl.ibm.com
+    eg. 9.1.1.2 bastion.test.abc.com download.test.abc.com registry.test.abc.com
     ```
 1. Set environment variables. You can also save them into a ```.sh``` script and source it, eg. ```# . env_vars.sh```.
     ```
@@ -84,11 +84,11 @@ Or if you have got the 2in1 OVA template of the air gapped registry & bastion no
 1. Download installation files and the RHCOS template.
     ```
     # cd /ocp4_downloads/clients
-    # wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest-4.6/openshift-client-linux.tar.gz
-    # wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest-4.6/openshift-install-linux.tar.gz
+    # wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/${OCP_RELEASE}/openshift-client-linux.tar.gz
+    # wget https://mirror.openshift.com/pub/openshift-v4/clients/ocp/${OCP_RELEASE}/openshift-install-linux.tar.gz
 
     # cd /ocp4_downloads/dependencies
-    # wget https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/4.6/latest/rhcos-${RHCOS_RELEASE}-x86_64-vmware.x86_64.ova
+    # wget https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/4.6/${RHCOS_RELEASE}/rhcos-${RHCOS_RELEASE}-x86_64-vmware.x86_64.ova
     ```
 1. Install OpenShift client.
     ```
@@ -206,18 +206,39 @@ Please note that if you are creating a 2in1 air gapped registry & bastion node, 
     ```
     # yum install -y ansible bind-utils buildah chrony dnsmasq git haproxy httpd-tools jq libvirt net-tools nfs-utils nginx podman python3 python3-netaddr python3-passlib python3-pip python3-policycoreutils python3-pyvmomi python3-requests screen sos syslinux-tftpboot wget yum-utils
     ```
-1. Copy this script set into ```~/``` from github.ibm.com, or upload it as a zip file and extract it.
+1. Get scripts into ```~/``` from github.
     ```
     # cd ~/
     # git clone https://github.com/IBM-ICP4D/cloud-pak-ocp-4.git
     ```
     It is assumed that the scripts are located in ```~/cloud-pak-ocp-4/```.
 
-Then you can skip to [Deploy the RHCOS template from OVA](#Deploy-the-RHCOS-template-from-OVA) and continue the installation.  
-Or, you can shutdown this VM and export it as a **"2in1 OVA/OVF template"**.
+    Then you can skip to [Deploy the RHCOS template from OVA](#Deploy-the-RHCOS-template-from-OVA) and continue the installation.  
+    Or, you can shutdown this VM and export it as a **"2in1 OVA/OVF template"**.
 
+1. (Optional) Export a VM as OVA/OVF template
+    * Shutdown the VM.
+    * Logon to vCenter Server(Web Client) with a valid admin account.
+    * Navigate to the VM, right click on it and choose 'Template' - 'Export OVF Template'.
+    * Enter the template name and click 'OK', then choose your local location to save the template files.
+    * An OVF template is saved as a folder.
+    * Please note that vCenter Server 6.7 does not support OVA format exporting via the Web Client, so please use PowerCLI or other API/SDK tools to export OVA template. Here is a PowerCLI example:
+        ```
+        Export-VApp -vm $vm -Format Ova -Destination "d:\template" -Confirm:$false
+        ```
 
 ## Deploy an OCP cluster from the bastion node
+### (Optional) Import 2in1 OVA/OVF template
+If you have the 2in1 OVA/OVF template of the airgapped registry & bastion node, please import it into vCenter Server.
+1. Logon to vCenter Server(Web Client) with a valid admin account.
+1. Navigate to the target cluster, right click on it and choose 'Deploy OVF Template'.
+1. Choose your local OVA file(if importing OVF files, select all files in the template folder), and click 'Next'.
+1. Enter the target VM name, select a target location, and click 'Next'.
+1. Select a compute resource(cluster or host), and click 'Next'.
+1. Review details and click 'Next'.
+1. Select the target datastore and virtual disk format(thin or thick), and click 'Next'.
+1. Select destination network and click 'Next'.
+1. Keep clicking 'Next' and 'Finish' to import the template as a VM.
 ### Re-configure air gapped registry & bastion node for your environment
 1. Change root password accordingly.
 1. Change the hostname, IP address, and update ```/etc/hosts``` records.
@@ -302,24 +323,27 @@ Or, you can shutdown this VM and export it as a **"2in1 OVA/OVF template"**.
 
 
 ## Deploy the RHCOS template from OVA
-* From the client where you manage the vCenter Server, download the ova file from the air gapped registry.
+1. From the client where you manage the vCenter Server, download the ova file from the air gapped registry.
     ```
     http://<airgapped-registry>:8080/ocp4_downloads/dependencies/<rhcos_name>.ova
     ```
-* Deploy the RHCOS template
-    * Deploy the VM from OVA
-    ```
-    place holder
-    ```
-    * (Optional) Enable CPU hardware virtualization
-    ```
-    place holder
-    ```
-    * Convert the VM to template
-    ```
-    place holder
-    ```
-
+1. Deploy the RHCOS template
+    1. Logon to vCenter Server(Web Client) with a valid admin account.
+    1. Navigate to the target cluster, right click on it and choose 'Deploy OVF Template'.
+    1. Choose your local RHCOS OVA file, and click 'Next'.
+    1. Enter the target VM name, select a target location, and click 'Next'.
+    1. Select a compute resource(cluster or host), and click 'Next'.
+    1. Review details and click 'Next'.
+    1. Select the target datastore and virtual disk format(thin or thick), and click 'Next'.
+    1. Select destination network and click 'Next'.
+    1. Keep clicking 'Next' and 'Finish' to import the template as a VM.
+1. (Optional) If your future workload needs to leverage the CPU hardware virtualization feature, enable it before converting the RHCOS VM into a template.
+    1. Right click on the RHCOS VM and choose 'Edit Settings'.
+    1. Navigate to 'CPU' - 'Hardware virtualization', check 'Expose hardware assisted virtualization to the guest OS', and click 'OK' to save settings.
+1. Convert the VM to template
+    1. Right click on the RHCOS VM, choose 'Template' - 'Convert to Template'.
+    1. Click 'Yes' to confirm the template converting.
+    1. Then it disappears from the 'Hosts and Clusters' view, but can be found in the 'VMs and Templates' view with a different icon.
 
 ## Install OCP cluster from bastion node
 ### Start OCP installation
@@ -371,12 +395,52 @@ When the air gapped registry & bastion node is ready, you can start deploying yo
         ```
         # ./prepare.sh -i inventory/airgapped.inv [-vvv]
         ```
-1. Update vApp options for bootstrap, master, and worker VMs.
+1. Now in ```/ocp_install``` there should be ```bootstrap.ign```, ```master.ign``` and ```worker.ign``` files generated.
+    * The size of ```bootstrap.ign``` is too big so it's not able to be injected into the VM's vApp options. In this case, we copy this file into a HTTP server and create a new ```<cluster_name>_bootstrap.ign``` file that refers to the original ```ign``` file.
+        ```
+        # <copy bootstrap.ign into a HTTP server>
+        # vi /ocp_install/<cluster_name>_bootstrap.ign
+        ---
+        {
+            "ignition": {
+                "config": {
+                "merge": [
+                    {
+                    "source": "http://<your HTTP location>/bootstrap.ign",
+                    "verification": {}
+                    }
+                ]
+                },
+                "timeouts": {},
+                "version": "3.1.0"
+            },
+            "passwd": {},
+            "storage": {},
+            "systemd": {}
+        }
+        ```
+    * Also copy ```master.ign``` and ```worker.ign``` into new names.
+        ```
+        # cd /ocp_install/
+        # cp master.ign <cluster_name>_master.ign
+        # cp worker.ign <cluster_name>_worker.ign
+        ```
+1. After the 3 ```ign``` files are prepared, update vApp options for bootstrap, master, and worker VMs.
     ```
     # ./vm_update_vapp.sh -i inventory/airgapped.inv [-vvv]
     ```
-    This script copies bootstrap.ign file into the Nginx server and prepares ```.ign``` files, then update the vApp options for VMs.
-    VMs will be initialized with these vApp options and apply the ```.ign``` configurations.
+    Then VMs will be initialized with vApp options and apply the ```.ign``` configurations when powering on.
+1. If DHCP is not enabled and VMs use static IPs, please update the VMs' advanced options manually to assign static IPs before powering on the VMs, since static IPs cannot be configured in vApp options.
+    * Logon to vCenter Server.
+    * Edit VM settings of bootstrap, master and worker nodes.
+    * Navigate to 'VM Options' tab, 'Advanced', then 'Configuration Parameters'.
+    * Click on 'Edit Configuration' and then 'Add Configuration Params'.
+    * Set name as ```guestinfo.afterburn.initrd.network-kargs```.
+    * And value as ```ip=<static IP>::<gateway IP>:<network mask>:<FQDN>:<NIC name>:none nameserver=<DNS server>```. For example,
+        ```
+        ip=192.168.0.11::192.168.0.1:255.255.255.0:master01.ocp46.test.abc.com:ens192:none nameserver=192.168.0.254
+        ```
+    * Then save the VM settings.
 1. Start VMs and bootstrapping the OCP cluster.
     ```
     # ./vm_power_on.sh -i inventory/airgapped.inv [-vvv]
@@ -418,6 +482,30 @@ When the air gapped registry & bastion node is ready, you can start deploying yo
     # oc login -s ${API_URL}:6443 -u <admin> -p <password> --insecure-skip-tls-verify=true
     ```
 1. Create NFS storage class.
+    In an airgapped network, NFS provisioner cannot be loaded from the internet, so load it locally into the airgapped registry. The following script is an example:
+    ```
+    #!/bin/bash
+    # Load 'nfs-client-provisioner' image and push it into the airgapped registry.
+    echo "Preparing nfs-client-provisioner airgapped image"
+    podman login -u ${REGISTRY_USER} -p ${REGISTRY_PASSWORD} --tls-verify=false ${LOCAL_REGISTRY}
+    img_pushed=$(podman search ${LOCAL_REGISTRY}/ | awk '{print $2}' | egrep -o 'nfs-client-provisioner')
+    if [ "${img_pushed}" == "" ]; then
+        podman load -i /ocp4_downloads/registry/images/nfs-client-provisioner.tar
+        img_id=$(podman images | egrep '^quay\.io\/external_storage\/nfs-client-provisioner {1,}latest' | awk '{print $3}')
+        podman tag ${img_id} ${LOCAL_REGISTRY}/${LOCAL_REPOSITORY}/nfs-client-provisioner:latest
+        podman push ${LOCAL_REGISTRY}/${LOCAL_REPOSITORY}/nfs-client-provisioner:latest
+        img_pushed=$(podman search ${LOCAL_REGISTRY}/ | awk '{print $2}' | egrep -o 'nfs-client-provisioner')
+        if [ "${img_pushed}" != "" ]; then
+            echo "nfs-client-provisioner is pushed into the airgapped registry."
+        else
+            echo "ERROR: nfs-client-provisioner is NOT pushed into the airgapped registry."
+            exit 1
+        fi
+    else
+        echo "nfs-client-provisioner exists. Skipping to the next step."
+    fi
+    ```
+    Then create NFS storage class.
     ```
     # /ocp_install/scripts/create_nfs_sc.sh
     # oc get sc
@@ -452,9 +540,11 @@ After completing the OpenShift 4.x installation, ensure that you keep the cluste
 
 ### (Optional) Start over from VM creation
 If you encounter some unknown issues(eg. mis-configuration of cluster_name and domain_name) and want to re-create the node VMs, read through this section and start over from the VM creation step.
-* Remove VMs by running ```./vm_delete.sh -i inventory/airgapped.inv```.
-    * This will delete the node VMs from vCenter Server;
-    * and delete ocp_install directory, and the leases file of DHCP service from the bastion node;
-    * and remove hostname entries from /etc/hosts file of bastion node.
+* Remove VMs from vCenter Server manually or by running ```./vm_delete.sh -i inventory/airgapped.inv```.
+* Delete the installation directory and the leases file of DHCP service.
+    ```
+    # rm -rf /ocp_install
+    # rm /var/lib/dnsmasq/dnsmasq.leases
+    ```
+* Remove hostname entries from ```/etc/hosts``` file.
 * Start over from running ```vm_create.sh```, ```prepare.sh```, etc.
-
