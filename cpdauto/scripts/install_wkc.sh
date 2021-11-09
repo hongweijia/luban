@@ -28,6 +28,7 @@ echo '' > ./logs/install_wkc.log
 
 #install python2 related libs
 yum install -y python2
+unlink /usr/bin/python
 ln -s /usr/bin/python2 /usr/bin/python
 pip2 install pyyaml
 
@@ -46,6 +47,7 @@ cloudctl case launch \
 sleep 1m
 
 #change default python version to be python3
+unlink /usr/bin/python
 ln -s /usr/bin/python3 /usr/bin/python
 
 #edit the IBM Cloud Pak foundational services operand registry to point to the project where the Cloud Pak for Data operators are installed

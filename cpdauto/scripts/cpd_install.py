@@ -312,7 +312,7 @@ class CPDInstall(object):
 
         if(self.installWKC == "True"):
 
-            #self.installDb2UOperator(icpdInstallLogFile)
+            self.installDb2UOperator(icpdInstallLogFile)
             
             TR.info(methodName,"Start installing Watson Knowledge Catalog") 
 
@@ -475,8 +475,8 @@ class CPDInstall(object):
         
         TR.info(methodName,"oc login successfully")
 
-        #install_db2u_command  = "./install_db2u.sh " + self.offline_dir_path + " " + self.Db2U_Case_Name + " " + self.Db2U_Case_Name 
-        install_db2u_command  = "./install_db2u.sh " + self.offline_dir_path + " " + self.Db2U_Case_Name + " " + "ibm-db2aaservice-4.0.3.tgz"
+        install_db2u_command  = "./install_db2u.sh " + self.offline_dir_path + " " + self.Db2aas_Case_Name + " " + self.Db2U_Case_Name 
+        #install_db2u_command  = "./install_db2u.sh " + self.offline_dir_path + " " + self.Db2U_Case_Name + " " + "ibm-db2aaservice-4.0.3.tgz"
 
         TR.info(methodName,"Installing Db2U with command %s"%install_db2u_command)
         try:
@@ -533,6 +533,7 @@ class CPDInstall(object):
         self.installWML = config['cpd_assembly']['installWML'].strip()
         self.installDb2U = config['cpd_assembly']['installDb2U'].strip()
         self.Db2U_Case_Name = config['cpd_assembly']['Db2U_Case_Name'].strip()
+        self.Db2aas_Case_Name = config['cpd_assembly']['Db2aas_Case_Name'].strip()
         self.installWKC = config['cpd_assembly']['installWKC'].strip()
         self.WKC_Case_Name = config['cpd_assembly']['WKC_Case_Name'].strip()
         self.installSpark = config['cpd_assembly']['installSpark'].strip()
@@ -604,6 +605,7 @@ class CPDInstall(object):
                 TR.info("debug","WSL_Case_Name= %s" %self.WSL_Case_Name) 
                 TR.info("debug","installWML= %s" %self.installWML)
                 TR.info("debug","installDb2U= %s" %self.installDb2U)
+                TR.info("debug","Db2aas_Case_Name= %s" %self.Db2aas_Case_Name)
                 TR.info("debug","Db2U_Case_Name= %s" %self.Db2U_Case_Name) 
                 TR.info("debug","installWKC= %s" %self.installWKC)
                 TR.info("debug","WKC_Case_Name= %s" %self.WKC_Case_Name)
