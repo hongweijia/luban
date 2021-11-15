@@ -200,15 +200,24 @@ class CPDInstall(object):
             self.printTime(wsl_start, wsl_end, "Install Watson Studio")
         
         if(self.installWML == "True"):
-            TR.info(methodName,"Start installing WML package")
-            wmlstart = Utilities.currentTimeMillis()
-            if(self.installWML_load_from == "NA"):
-                self.installAssembliesAirgap("wml",self.default_load_from,icpdInstallLogFile)
-            else:
-                self.installAssembliesAirgap("wml",self.installWML_load_from,icpdInstallLogFile)
-            wmlend = Utilities.currentTimeMillis()
-            TR.info(methodName,"WML package installation completed")
-            self.printTime(wmlstart, wmlend, "Installing WML")
+            TR.info(methodName,"Start installing Watson Machine Learning") 
+
+            wml_start = Utilities.currentTimeMillis()
+            
+            install_wml_command  = "./install_wml.sh " + offline_installation_dir + " " + self.WML_Case_Name  + " " + self.image_registry_url + " " + self.cpd_operator_namespace + " " + self.cpd_instance_namespace + " " + self.cpd_license + " " + self.storage_type + " " + self.storage_class
+
+            TR.info(methodName,"Install Watson Machine Learning with command %s"%install_wml_command)
+            
+            try:
+                install_wml_retcode = check_output(['bash','-c', install_wml_command]) 
+            except CalledProcessError as e:
+                TR.error(methodName,"command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))    
+            
+            TR.info(methodName,"Install Watson Machine Learning with command %s returned %s"%(install_wml_command,install_wml_retcode))
+            
+            wml_end = Utilities.currentTimeMillis()
+            TR.info(methodName,"Install Watson Machine Learning completed")
+            self.printTime(wml_start, wml_end, "Install Watson Machine Learning")
 
         if(self.installOSWML == "True"):
             TR.info(methodName,"Start installing AI Openscale package")
@@ -531,6 +540,7 @@ class CPDInstall(object):
         self.installWSL = config['cpd_assembly']['installWSL'].strip()
         self.WSL_Case_Name = config['cpd_assembly']['WSL_Case_Name'].strip()
         self.installWML = config['cpd_assembly']['installWML'].strip()
+        self.WML_Case_Name = config['cpd_assembly']['WML_Case_Name'].strip()
         self.installDb2U = config['cpd_assembly']['installDb2U'].strip()
         self.Db2U_Case_Name = config['cpd_assembly']['Db2U_Case_Name'].strip()
         self.Db2aas_Case_Name = config['cpd_assembly']['Db2aas_Case_Name'].strip()
@@ -604,6 +614,7 @@ class CPDInstall(object):
                 TR.info("debug","installWSL= %s" %self.installWSL)
                 TR.info("debug","WSL_Case_Name= %s" %self.WSL_Case_Name) 
                 TR.info("debug","installWML= %s" %self.installWML)
+                TR.info("debug","WML_Case_Name= %s" %self.WML_Case_Name) 
                 TR.info("debug","installDb2U= %s" %self.installDb2U)
                 TR.info("debug","Db2aas_Case_Name= %s" %self.Db2aas_Case_Name)
                 TR.info("debug","Db2U_Case_Name= %s" %self.Db2U_Case_Name) 
