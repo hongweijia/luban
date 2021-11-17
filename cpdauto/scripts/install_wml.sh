@@ -63,10 +63,11 @@ sed -i -e s#CPD_LICENSE#${CPD_LICENSE}#g wml-cr.yaml
 sed -i -e s#STORAGE_CLASS#${STORAGE_CLASS}#g wml-cr.yaml
 if [[ ${STORAGE_TYPE} == "nfs" ]]
 then
-  STORAGE_TYPE=""
+  STORAGE_TYPE="\"\""
 fi
 sed -i -e s#STORAGE_TYPE#${STORAGE_TYPE}#g wml-cr.yaml
 
+echo '*** executing **** oc apply -f wml-cr.yaml' >> ./logs/install_wml.log
 result=$(oc apply -f wml-cr.yaml)
 echo $result >> ./logs/install_wml.log
 
