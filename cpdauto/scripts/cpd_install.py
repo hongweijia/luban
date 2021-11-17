@@ -470,6 +470,32 @@ class CPDInstall(object):
 
         TR.info(methodName,"  Completed image pull related setting")
     #endDef
+    def installCCSCatSrc(self, icpdInstallLogFile):
+       
+        methodName = "installCCSCatSrc"
+        TR.info(methodName," Start installing CCS catalog source")  
+
+        self.logincmd = "oc login -u " + self.ocp_admin_user + " -p "+self.ocp_admin_password
+        try:
+            call(self.logincmd, shell=True,stdout=icpdInstallLogFile)
+        except CalledProcessError as e:
+            TR.error(methodName,"command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))    
+        
+        TR.info(methodName,"oc login successfully")
+
+        install_ccs_command  = "./install_ccs.sh " + self.offline_dir_path + " " + self.Db2aas_Case_Name + " " + self.Db2U_Case_Name 
+
+        TR.info(methodName,"Installing CCS catalog source with command %s"%install_ccs_command)
+        try:
+            retcode = check_output(['bash','-c', install_ccs_command]) 
+            TR.info(methodName,"Installing CCS catalog source with command %s returned %s"%(install_ccs_command,retcode))
+        except CalledProcessError as e:
+            TR.error(methodName,"command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))    
+        
+        time.sleep(60)
+
+        TR.info(methodName,"  Completed CCS catalog source installation")
+    #endDef
 
     def installDb2UOperator(self, icpdInstallLogFile):
        
@@ -539,6 +565,8 @@ class CPDInstall(object):
         self.CPDControlPlane_Case_Name = config['cpd_assembly']['CPDControlPlane_Case_Name'].strip()
         self.installWSL = config['cpd_assembly']['installWSL'].strip()
         self.WSL_Case_Name = config['cpd_assembly']['WSL_Case_Name'].strip()
+        self.installCCS = config['cpd_assembly']['installCCS'].strip()
+        self.CCS_Case_Name = config['cpd_assembly']['CCS_Case_Name'].strip()
         self.installWML = config['cpd_assembly']['installWML'].strip()
         self.WML_Case_Name = config['cpd_assembly']['WML_Case_Name'].strip()
         self.installDb2U = config['cpd_assembly']['installDb2U'].strip()
@@ -613,6 +641,8 @@ class CPDInstall(object):
                 TR.info("debug","CPDControlPlane_Case_Name= %s" %self.CPDControlPlane_Case_Name)             
                 TR.info("debug","installWSL= %s" %self.installWSL)
                 TR.info("debug","WSL_Case_Name= %s" %self.WSL_Case_Name) 
+                TR.info("debug","installCCS= %s" %self.installCCS)
+                TR.info("debug","CCS_Case_Name= %s" %self.CCS_Case_Name) 
                 TR.info("debug","installWML= %s" %self.installWML)
                 TR.info("debug","WML_Case_Name= %s" %self.WML_Case_Name) 
                 TR.info("debug","installDb2U= %s" %self.installDb2U)

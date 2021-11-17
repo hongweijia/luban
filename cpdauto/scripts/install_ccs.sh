@@ -1,36 +1,25 @@
 #!/bin/bash
 
 
-# Install ccs operator
 
-wget https://raw.githubusercontent.com/IBM/cloud-pak/master/repo/case/ibm-ccs-1.0.0.tgz
-
-
-CASE_PACKAGE_NAME="ibm-ccs-1.0.0.tgz"
+OFFLINEDIR=$1
+CCS_CASE_PACKAGE_NAME=$2
 
 
-cloudctl case launch --case ./${CASE_PACKAGE_NAME} \
-    --tolerance 1 --namespace ${OP_NAMESPACE}         \
-    --action installOperator                        \
-    --inventory ccsSetup                            
+mkdir -p ./logs
+touch ./logs/install_ccs.log
+echo '' > ./logs/install_ccs.log
 
+# Create CCS catalog source 
 
-# Checking if the ccs operator pods are ready and running. 
+echo '*** executing **** create CCS catalog source' >> ./logs/install_ccs.log
+#
 
-# checking status of ibm-cpc-ccs-operator
+cloudctl case launch \
+  --case ${OFFLINEDIR}/${CCS_CASE_PACKAGE_NAME} \
+  --inventory ccsSetup \
+  --namespace openshift-marketplace \
+  --action install-catalog \
+  --args "--inputDir ${OFFLINEDIR} --recursive"
 
-./pod-status-check.sh ibm-cpd-ccs-operator ${OP_NAMESPACE} 
-
-# switch zen namespace
-
-oc project ${NAMESPACE} 
-
-# Create CCS CR: 
-
-echo '*** executing **** oc create -f ccs-cr.yaml'
-result=$(oc create -f ccs-cr.yaml)
-echo $result
-
-# check the CCS cr status
-
-./check-cr-status.sh ccs ccs-cr ${NAMESPACE}  ccsStatus
+sleep 1m
