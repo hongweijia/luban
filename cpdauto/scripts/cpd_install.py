@@ -201,8 +201,8 @@ class CPDInstall(object):
         
         if(self.installWML == "True"):
             TR.info(methodName,"Start installing Watson Machine Learning") 
-
             wml_start = Utilities.currentTimeMillis()
+            self.installCCSCatSrc(icpdInstallLogFile)
             
             install_wml_command  = "./install_wml.sh " + offline_installation_dir + " " + self.WML_Case_Name  + " " + self.image_registry_url + " " + self.cpd_operator_namespace + " " + self.cpd_instance_namespace + " " + self.cpd_license + " " + self.storage_type + " " + self.storage_class
 
