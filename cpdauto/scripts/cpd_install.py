@@ -495,7 +495,7 @@ class CPDInstall(object):
         
         TR.info(methodName,"oc login successfully")
 
-        install_ccs_command  = "./install_ccs.sh " + self.offline_dir_path + " " + self.Db2aas_Case_Name + " " + self.Db2U_Case_Name 
+        install_ccs_command  = "./install_ccs.sh " + self.offline_dir_path + " " + self.CCS_Case_Name 
 
         TR.info(methodName,"Installing CCS catalog source with command %s"%install_ccs_command)
         try:
