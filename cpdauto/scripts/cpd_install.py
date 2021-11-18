@@ -343,15 +343,27 @@ class CPDInstall(object):
             self.printTime(wkcstart, wkcend, "Install Watson Knowledge Catalog")
             
         if(self.installDV == "True"):
-            TR.info(methodName,"Start installing DV package")
-            dvstart = Utilities.currentTimeMillis()
-            if(self.installDV_load_from == "NA"):
-                self.installAssembliesAirgap("dv",self.default_load_from,icpdInstallLogFile)
-            else:
-                self.installAssembliesAirgap("dv",self.installDV_load_from,icpdInstallLogFile)   
-            dvend = Utilities.currentTimeMillis()
-            TR.info(methodName,"DV package installation completed")
-            self.printTime(dvstart, dvend, "Installing DV")      
+
+            self.installDb2UOperator(icpdInstallLogFile)
+            
+            TR.info(methodName,"Start installing Data Virtualization") 
+
+            wkcstart = Utilities.currentTimeMillis()
+            
+            install_wkc_command  = "./install_dv.sh " + offline_installation_dir + " " + self.WKC_Case_Name  + " " + self.image_registry_url + " " + self.foundation_service_namespace + " " + self.cpd_operator_namespace + " " + self.cpd_instance_namespace + " " + self.cpd_license
+            TR.info(methodName,"Install Data Virtualization with command %s"%install_wkc_command)
+            
+            install_wkc_retcode = ""
+            try:
+                install_wkc_retcode = check_output(['bash','-c', install_wkc_command]) 
+            except CalledProcessError as e:
+                TR.error(methodName,"command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))    
+            
+            TR.info(methodName,"Install Data Virtualization with command %s returned %s"%(install_wkc_command,install_wkc_retcode))
+            
+            wkcend = Utilities.currentTimeMillis()
+            TR.info(methodName,"Install Data Virtualization completed")
+            self.printTime(wkcstart, wkcend, "Install Data Virtualization")    
 
 
         TR.info(methodName,"Installed all packages.")
@@ -577,7 +589,9 @@ class CPDInstall(object):
         self.installSpark = config['cpd_assembly']['installSpark'].strip()
         self.installCDE = config['cpd_assembly']['installCDE'].strip()
         self.installDMC = config['cpd_assembly']['installDMC'].strip()
+        self.DMC_Case_Name = config['cpd_assembly']['DMC_Case_Name'].strip()
         self.installDV = config['cpd_assembly']['installDV'].strip()
+        self.DV_Case_Name = config['cpd_assembly']['DV_Case_Name'].strip()
         self.installOSWML = config['cpd_assembly']['installOSWML'].strip()
         self.installRStudio = config['cpd_assembly']['installRStudio'].strip()
         self.installSPSS = config['cpd_assembly']['installSPSS'].strip()       
@@ -592,7 +606,41 @@ class CPDInstall(object):
         self.cpd_instance_namespace = config['cpd_assembly']['cpd_instance_namespace'].strip()
         self.cpd_license = config['cpd_assembly']['cpd_license'].strip()
         TR.info(methodName,"Load installation configuration completed")
-        TR.info(methodName,"Installation configuration:" + self.ocp_admin_user + "-" + self.ocp_admin_password  + "-" + self.installer_path)
+        TR.info(methodName,"Installation configuration:" + self.ocp_admin_user + "-" + self.ocp_admin_password  + "-" + self.installer_path)      
+        TR.info("debug","image_registry_url= %s" %self.image_registry_url)
+        TR.info("debug","image_registry_user= %s" %self.image_registry_user)
+        TR.info("debug","image_registry_password= %s" %self.image_registry_password)
+        TR.info("debug","foundation_service_namespace= %s" %self.foundation_service_namespace)
+        TR.info("debug","cpd_operator_namespace= %s" %self.cpd_operator_namespace)
+        TR.info("debug","cpd_instance_namespace= %s" %self.cpd_instance_namespace)
+        TR.info("debug","installFoundationalService= %s" %self.installFoundationalService)
+        TR.info("debug","FoundationalService_Case_Name= %s" %self.FoundationalService_Case_Name)
+        TR.info("debug","installCPDControlPlane= %s" %self.installCPDControlPlane)
+        TR.info("debug","CPDControlPlane_Case_Name= %s" %self.CPDControlPlane_Case_Name)             
+        TR.info("debug","installWSL= %s" %self.installWSL)
+        TR.info("debug","WSL_Case_Name= %s" %self.WSL_Case_Name) 
+        TR.info("debug","installCCS= %s" %self.installCCS)
+        TR.info("debug","CCS_Case_Name= %s" %self.CCS_Case_Name) 
+        TR.info("debug","installWML= %s" %self.installWML)
+        TR.info("debug","WML_Case_Name= %s" %self.WML_Case_Name) 
+        TR.info("debug","installDb2U= %s" %self.installDb2U)
+        TR.info("debug","Db2aas_Case_Name= %s" %self.Db2aas_Case_Name)
+        TR.info("debug","Db2U_Case_Name= %s" %self.Db2U_Case_Name) 
+        TR.info("debug","installWKC= %s" %self.installWKC)
+        TR.info("debug","WKC_Case_Name= %s" %self.WKC_Case_Name)
+        TR.info("debug","installDV= %s" %self.installDV)
+        TR.info("debug","DV_Case_Name= %s" %self.DV_Case_Name)
+        TR.info("debug","installDMC= %s" %self.installDMC)
+        TR.info("debug","DMC_Case_Name= %s" %self.DMC_Case_Name)
+        TR.info("debug","installOSWML= %s" %self.installOSWML)
+        TR.info("debug","installCDE= %s" %self.installCDE)
+        TR.info("debug","installSpark= %s" %self.installSpark)
+        TR.info("debug","installRStudio= %s" %self.installRStudio)
+        TR.info("debug","installSPSS= %s" %self.installSPSS)
+        TR.info("debug","installRuntimeGPUPy37= %s" %self.installRuntimeGPUPy37)
+        TR.info("debug","installRuntimeR36= %s" %self.installRuntimeR36)
+        TR.info("debug","installHEE= %s" %self.installHEE)
+        TR.info("debug","installDODS= %s" %self.installDODS) 
     #endDef
 
     def main(self,argv):
@@ -627,40 +675,7 @@ class CPDInstall(object):
                     self.printTime(ocpstart, ocpend, "Configuring image pull")
 
                 if(self.installOSWML == "True"):
-                    self.installWML="True"
-                
-                TR.info("debug","image_registry_url= %s" %self.image_registry_url)
-                TR.info("debug","image_registry_user= %s" %self.image_registry_user)
-                TR.info("debug","image_registry_password= %s" %self.image_registry_password)
-                TR.info("debug","foundation_service_namespace= %s" %self.foundation_service_namespace)
-                TR.info("debug","cpd_operator_namespace= %s" %self.cpd_operator_namespace)
-                TR.info("debug","cpd_instance_namespace= %s" %self.cpd_instance_namespace)
-                TR.info("debug","installFoundationalService= %s" %self.installFoundationalService)
-                TR.info("debug","FoundationalService_Case_Name= %s" %self.FoundationalService_Case_Name)
-                TR.info("debug","installCPDControlPlane= %s" %self.installCPDControlPlane)
-                TR.info("debug","CPDControlPlane_Case_Name= %s" %self.CPDControlPlane_Case_Name)             
-                TR.info("debug","installWSL= %s" %self.installWSL)
-                TR.info("debug","WSL_Case_Name= %s" %self.WSL_Case_Name) 
-                TR.info("debug","installCCS= %s" %self.installCCS)
-                TR.info("debug","CCS_Case_Name= %s" %self.CCS_Case_Name) 
-                TR.info("debug","installWML= %s" %self.installWML)
-                TR.info("debug","WML_Case_Name= %s" %self.WML_Case_Name) 
-                TR.info("debug","installDb2U= %s" %self.installDb2U)
-                TR.info("debug","Db2aas_Case_Name= %s" %self.Db2aas_Case_Name)
-                TR.info("debug","Db2U_Case_Name= %s" %self.Db2U_Case_Name) 
-                TR.info("debug","installWKC= %s" %self.installWKC)
-                TR.info("debug","WKC_Case_Name= %s" %self.WKC_Case_Name)
-                TR.info("debug","installDV= %s" %self.installDV)
-                TR.info("debug","installDMC= %s" %self.installDMC)
-                TR.info("debug","installOSWML= %s" %self.installOSWML)
-                TR.info("debug","installCDE= %s" %self.installCDE)
-                TR.info("debug","installSpark= %s" %self.installSpark)
-                TR.info("debug","installRStudio= %s" %self.installRStudio)
-                TR.info("debug","installSPSS= %s" %self.installSPSS)
-                TR.info("debug","installRuntimeGPUPy37= %s" %self.installRuntimeGPUPy37)
-                TR.info("debug","installRuntimeR36= %s" %self.installRuntimeR36)
-                TR.info("debug","installHEE= %s" %self.installHEE)
-                TR.info("debug","installDODS= %s" %self.installDODS)  
+                    self.installWML="True" 
 
                 self.installCPD(icpdInstallLogFile)
                 
