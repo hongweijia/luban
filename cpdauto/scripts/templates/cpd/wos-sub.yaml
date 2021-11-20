@@ -6,10 +6,10 @@ metadata:
     app.kubernetes.io/instance: ibm-watson-openscale-operator-subscription
     app.kubernetes.io/managed-by: ibm-watson-openscale-operator
     app.kubernetes.io/name: ibm-watson-openscale-operator-subscription
-  namespace: OPERATOR_NAMESPACE
+  namespace: CPD_OPERATORS_NAMESPACE    # Pick the project that contains the Cloud Pak for Data operator
 spec:
   channel: v1
   installPlanApproval: Automatic
   name: ibm-cpd-wos
-  source: ibm-operator-catalog
+  source: ibm-openscale-operator-catalog
   sourceNamespace: openshift-marketplace

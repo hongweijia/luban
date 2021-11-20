@@ -220,15 +220,23 @@ class CPDInstall(object):
             self.printTime(wml_start, wml_end, "Install Watson Machine Learning")
 
         if(self.installOSWML == "True"):
-            TR.info(methodName,"Start installing AI Openscale package")
-            aiostart = Utilities.currentTimeMillis()
-            if(self.installOSWML_load_from == "NA"):
-                self.installAssembliesAirgap("aiopenscale",self.default_load_from,icpdInstallLogFile)
-            else:
-                self.installAssembliesAirgap("aiopenscale",self.installOSWML_load_from,icpdInstallLogFile)
-            aioend = Utilities.currentTimeMillis()
-            TR.info(methodName,"AI Openscale package installation completed")
-            self.printTime(aiostart, aioend, "Installing AI Openscale")    
+            TR.info(methodName,"Start installing Watson OpenScale") 
+            wos_start = Utilities.currentTimeMillis()
+            
+            install_wos_command  = "./install_aiopenscale.sh " + offline_installation_dir + " " + self.WOS_Case_Name  + " " + self.image_registry_url + " " + self.cpd_operator_namespace + " " + self.cpd_instance_namespace + " " + self.cpd_license + " " + self.storage_type + " " + self.storage_class
+
+            TR.info(methodName,"Install Watson OpenScale with command %s"%install_wos_command)
+            
+            try:
+                install_wos_retcode = check_output(['bash','-c', install_wos_command]) 
+            except CalledProcessError as e:
+                TR.error(methodName,"command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))    
+            
+            TR.info(methodName,"Install Watson OpenScale with command %s returned %s"%(install_wos_command,install_wos_retcode))
+            
+            wos_end = Utilities.currentTimeMillis()
+            TR.info(methodName,"Install Watson OpenScale completed")
+            self.printTime(wos_start, wos_end, "Install Watson OpenScale")  
 
         if(self.installCDE == "True"):
             TR.info(methodName,"Start installing Cognos Dashboard package")
@@ -593,6 +601,7 @@ class CPDInstall(object):
         self.installDV = config['cpd_assembly']['installDV'].strip()
         self.DV_Case_Name = config['cpd_assembly']['DV_Case_Name'].strip()
         self.installOSWML = config['cpd_assembly']['installOSWML'].strip()
+        self.WOS_Case_Name = config['cpd_assembly']['WOS_Case_Name'].strip()
         self.installRStudio = config['cpd_assembly']['installRStudio'].strip()
         self.installSPSS = config['cpd_assembly']['installSPSS'].strip()       
         self.installRuntimeGPUPy37 = config['cpd_assembly']['installRuntimeGPUPy37'].strip()
@@ -633,6 +642,7 @@ class CPDInstall(object):
         TR.info("debug","installDMC= %s" %self.installDMC)
         TR.info("debug","DMC_Case_Name= %s" %self.DMC_Case_Name)
         TR.info("debug","installOSWML= %s" %self.installOSWML)
+        TR.info("debug","WOS_Case_Name= %s" %self.WOS_Case_Name) 
         TR.info("debug","installCDE= %s" %self.installCDE)
         TR.info("debug","installSpark= %s" %self.installSpark)
         TR.info("debug","installRStudio= %s" %self.installRStudio)
