@@ -6,10 +6,10 @@ metadata:
     app.kubernetes.io/managed-by: ibm-cde-operator
     app.kubernetes.io/name: ibm-cde-operator-subscription
   name: ibm-cde-operator-subscription
-  namespace: OPERATOR_NAMESPACE
+  namespace: CPD_OPERATORS_NAMESPACE    # Pick the project that contains the Cloud Pak for Data operator
 spec:
   channel: v1.0
   installPlanApproval: Automatic
   name: ibm-cde-operator
-  source: ibm-operator-catalog
+  source: ibm-cde-operator-catalog
   sourceNamespace: openshift-marketplace

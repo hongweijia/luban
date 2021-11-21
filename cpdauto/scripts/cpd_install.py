@@ -239,15 +239,24 @@ class CPDInstall(object):
             self.printTime(wos_start, wos_end, "Install Watson OpenScale")  
 
         if(self.installCDE == "True"):
-            TR.info(methodName,"Start installing Cognos Dashboard package")
-            cdestart = Utilities.currentTimeMillis()
-            if(self.installCDE_load_from == "NA"):
-                self.installAssembliesAirgap("cde",self.default_load_from,icpdInstallLogFile)
-            else:
-                self.installAssembliesAirgap("cde",self.installCDE_load_from,icpdInstallLogFile)
-            cdeend = Utilities.currentTimeMillis()
-            TR.info(methodName,"Cognos Dashboard package installation completed")
-            self.printTime(cdestart, cdeend, "Installing Cognos Dashboard")  
+            TR.info(methodName,"Start installing Cognos Dashboards") 
+            cde_start = Utilities.currentTimeMillis()
+            self.installCCSCatSrc(icpdInstallLogFile)
+            
+            install_cde_command  = "./install_cde.sh " + offline_installation_dir + " " + self.CDE_Case_Name  + " " + self.image_registry_url + " " + self.cpd_operator_namespace + " " + self.cpd_instance_namespace + " " + self.cpd_license + " " + self.storage_type + " " + self.storage_class
+
+            TR.info(methodName,"Install Cognos Dashboards with command %s"%install_cde_command)
+            
+            try:
+                install_cde_retcode = check_output(['bash','-c', install_cde_command]) 
+            except CalledProcessError as e:
+                TR.error(methodName,"command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))    
+            
+            TR.info(methodName,"Install Cognos Dashboards with command %s returned %s"%(install_cde_command,install_cde_retcode))
+            
+            cde_end = Utilities.currentTimeMillis()
+            TR.info(methodName,"Install Cognos Dashboards completed")
+            self.printTime(cde_start, cde_end, "Install Cognos Dashboards")
 
         
         if(self.installRStudio == "True"):
@@ -604,6 +613,7 @@ class CPDInstall(object):
         self.WKC_Case_Name = config['cpd_assembly']['WKC_Case_Name'].strip()
         self.installSpark = config['cpd_assembly']['installSpark'].strip()
         self.installCDE = config['cpd_assembly']['installCDE'].strip()
+        self.CDE_Case_Name = config['cpd_assembly']['CDE_Case_Name'].strip()
         self.installDMC = config['cpd_assembly']['installDMC'].strip()
         self.DMC_Case_Name = config['cpd_assembly']['DMC_Case_Name'].strip()
         self.installDV = config['cpd_assembly']['installDV'].strip()
@@ -653,6 +663,7 @@ class CPDInstall(object):
         TR.info("debug","installOSWML= %s" %self.installOSWML)
         TR.info("debug","WOS_Case_Name= %s" %self.WOS_Case_Name) 
         TR.info("debug","installCDE= %s" %self.installCDE)
+        TR.info("debug","CDE_Case_Name= %s" %self.CDE_Case_Name) 
         TR.info("debug","installSpark= %s" %self.installSpark)
         TR.info("debug","installRStudio= %s" %self.installRStudio)
         TR.info("debug","installSPSS= %s" %self.installSPSS)
