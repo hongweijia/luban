@@ -294,16 +294,24 @@ class CPDInstall(object):
             TR.info(methodName,"GPUPy36 package installation completed")
             self.printTime(gpupy36start, gpupy36end, "Installing GPUPy36")
         
-        if(self.installRuntimeR36 == "True"):
-            TR.info(methodName,"Start installing RuntimeR36 package")
-            r36start = Utilities.currentTimeMillis()
-            if(self.installRuntimeR36_load_from == "NA"):
-                self.installAssembliesAirgap("runtime-addon-py37gpu",self.default_load_from,icpdInstallLogFile)
-            else:
-                self.installAssembliesAirgap("runtime-addon-r36",self.installRuntimeR36_load_from,icpdInstallLogFile)
-            r36end = Utilities.currentTimeMillis()
-            TR.info(methodName,"R36 package installation completed")
-            self.printTime(r36start, r36end, "Installing R36")
+        if(self.installDb2WH == "True"):
+            TR.info(methodName,"Start installing Db2WH") 
+            db2wh_start = Utilities.currentTimeMillis()
+            
+            install_db2wh_command  = "./install_db2wh.sh " + offline_installation_dir + " " + self.Db2WH_Case_Name  + " " + self.image_registry_url + " " + self.cpd_operator_namespace + " " + self.cpd_instance_namespace + " " + self.cpd_license + " " + self.storage_type + " " + self.storage_class
+
+            TR.info(methodName,"Install Db2WH with command %s"%install_db2wh_command)
+            
+            try:
+                install_db2wh_retcode = check_output(['bash','-c', install_db2wh_command]) 
+            except CalledProcessError as e:
+                TR.error(methodName,"command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))    
+            
+            TR.info(methodName,"Install Db2WH with command %s returned %s"%(install_db2wh_command,install_db2wh_retcode))
+            
+            db2wh_end = Utilities.currentTimeMillis()
+            TR.info(methodName,"Install Db2WH completed")
+            self.printTime(db2wh_start, db2wh_end, "Install Db2WH")  
         
         if(self.installHEE == "True"):
             TR.info(methodName,"Start installing HEE package")
@@ -605,7 +613,8 @@ class CPDInstall(object):
         self.installRStudio = config['cpd_assembly']['installRStudio'].strip()
         self.installSPSS = config['cpd_assembly']['installSPSS'].strip()       
         self.installRuntimeGPUPy37 = config['cpd_assembly']['installRuntimeGPUPy37'].strip()
-        self.installRuntimeR36 = config['cpd_assembly']['installRuntimeR36'].strip()
+        self.installDb2WH = config['cpd_assembly']['installDb2WH'].strip()
+        self.Db2WH_Case_Name = config['cpd_assembly']['Db2WH_Case_Name'].strip()
         self.installHEE = config['cpd_assembly']['installHEE'].strip()
         self.installDODS = config['cpd_assembly']['installDODS'].strip()
         self.storage_type = config['cpd_assembly']['storage_type'].strip()    
@@ -648,7 +657,8 @@ class CPDInstall(object):
         TR.info("debug","installRStudio= %s" %self.installRStudio)
         TR.info("debug","installSPSS= %s" %self.installSPSS)
         TR.info("debug","installRuntimeGPUPy37= %s" %self.installRuntimeGPUPy37)
-        TR.info("debug","installRuntimeR36= %s" %self.installRuntimeR36)
+        TR.info("debug","installDb2WH= %s" %self.installDb2WH)
+        TR.info("debug","Db2WH_Case_Name= %s" %self.Db2WH_Case_Name)  
         TR.info("debug","installHEE= %s" %self.installHEE)
         TR.info("debug","installDODS= %s" %self.installDODS) 
     #endDef
