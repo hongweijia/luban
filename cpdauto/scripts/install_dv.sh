@@ -45,27 +45,6 @@ result=$(oc apply -f dv-sub.yaml)
 echo $result  >> ./logs/install_dv.log
 sleep 1m
 
-
-# Checking if the DV operator pods are ready and running. 
-
-./pod-status-check.sh ibm-dv-operator ${CPD_OPERATORS_NAMESPACE}
-
-# switch zen namespace
-
-oc project ${CPD_INSTANCE_NAMESPACE}
-
-# Create DV CR: 
-sed -i -e s#CPD_INSTANCE_NAMESPACE#${CPD_INSTANCE_NAMESPACE}#g dv-cr.yaml
-sed -i -e s#CPD_LICENSE#${CPD_LICENSE}#g dv-cr.yaml
-#sed -i -e s#STORAGE_TYPE#${STORAGE_TYPE}#g dv-cr.yaml
-#sed -i -e s#STORAGE_CLASS#${STORAGE_CLASS}#g dv-cr.yaml
-#if [[ ${STORAGE_TYPE} == "nfs" ]]
-#then
-##  sed -i "/storageVendor/d" dv-cr.yaml
-#else
-#  sed -i "/storageClass/d" dv-cr.yaml
-#fi
-
 ############Check DV operator status Start################
 ######ibm-dv-operator.v1.7.2 has to be changed for new release!!!!#########
 while true; do
@@ -91,7 +70,28 @@ if oc get deployments -n ${CPD_OPERATORS_NAMESPACE} -l olm.owner="ibm-dv-operato
 fi
 sleep 10
 done
+
+# Checking if the DV operator pods are ready and running. 
+
+./pod-status-check.sh ibm-dv-operator ${CPD_OPERATORS_NAMESPACE}
 ############Check DV operator status End################
+
+# switch zen namespace
+
+oc project ${CPD_INSTANCE_NAMESPACE}
+
+# Create DV CR: 
+sed -i -e s#CPD_INSTANCE_NAMESPACE#${CPD_INSTANCE_NAMESPACE}#g dv-cr.yaml
+sed -i -e s#CPD_LICENSE#${CPD_LICENSE}#g dv-cr.yaml
+#sed -i -e s#STORAGE_TYPE#${STORAGE_TYPE}#g dv-cr.yaml
+#sed -i -e s#STORAGE_CLASS#${STORAGE_CLASS}#g dv-cr.yaml
+#if [[ ${STORAGE_TYPE} == "nfs" ]]
+#then
+##  sed -i "/storageVendor/d" dv-cr.yaml
+#else
+#  sed -i "/storageClass/d" dv-cr.yaml
+#fi
+
 
 echo '*** executing **** oc apply -f dv-cr.yaml' >> ./logs/install_dv.log
 result=$(oc apply -f dv-cr.yaml)

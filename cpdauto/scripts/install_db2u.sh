@@ -39,3 +39,41 @@ sleep 1m
 
 unlink /usr/bin/python
 ln -s /usr/bin/python3 /usr/bin/python
+
+
+# Install db2u operator 
+
+sed -i -e s#CPD_OPERATORS_NAMESPACE#${CPD_OPERATORS_NAMESPACE}#g db2u-sub.yaml
+
+echo '*** executing **** oc apply -f db2u-sub.yaml' >> ./logs/install_db2u.log
+result=$(oc apply -f db2u-sub.yaml)
+echo $result  >> ./logs/install_db2u.log
+sleep 1m
+
+############Check Db2u operator status Start################
+######v1.1.6 has to be changed for new release!!!!#########
+while true; do
+if oc get sub -n ${CPD_OPERATORS_NAMESPACE} ibm-db2u-operator -o jsonpath='{.status.installedCSV} {"\n"}' | grep db2u-operator.v1.1.6 >/dev/null 2>&1; then
+  echo -e "\ndb2u-operator.v1.1.6 was successfully created." >> ./logs/install_db2u.log
+  break
+fi
+sleep 10
+done
+######v1.1.6 has to be changed for new release!!!!#########
+while true; do
+if oc get csv -n ${CPD_OPERATORS_NAMESPACE} db2u-operator.v1.1.6 -o jsonpath='{ .status.phase } : { .status.message} {"\n"}' | grep "Succeeded : install strategy completed with no errors" >/dev/null 2>&1; then
+  echo -e "\nInstall strategy completed with no errors" >> ./logs/install_db2u.log
+  break
+fi
+sleep 10
+done
+######v1.1.6 has to be changed for new release!!!!#########
+while true; do
+if oc get deployments -n ${CPD_OPERATORS_NAMESPACE} -l olm.owner="db2u-operator.v1.1.6" -o jsonpath="{.items[0].status.availableReplicas} {'\n'}" | grep 1 >/dev/null 2>&1; then
+  echo -e "\nibm-db2aaservice-cp4d-operator.v1.0.3 is ready." >> ./logs/install_db2u.log
+  break
+fi
+sleep 10
+done
+
+############Check Db2u operator status End##################

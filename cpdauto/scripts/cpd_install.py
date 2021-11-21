@@ -364,22 +364,22 @@ class CPDInstall(object):
             
             TR.info(methodName,"Start installing Data Virtualization") 
 
-            wkcstart = Utilities.currentTimeMillis()
+            dvstart = Utilities.currentTimeMillis()
             
-            install_wkc_command  = "./install_dv.sh " + offline_installation_dir + " " + self.WKC_Case_Name  + " " + self.image_registry_url + " " + self.foundation_service_namespace + " " + self.cpd_operator_namespace + " " + self.cpd_instance_namespace + " " + self.cpd_license
-            TR.info(methodName,"Install Data Virtualization with command %s"%install_wkc_command)
+            install_dv_command  = "./install_dv.sh " + offline_installation_dir + " " + self.DV_Case_Name  + " " + self.image_registry_url + " " + self.foundation_service_namespace + " " + self.cpd_operator_namespace + " " + self.cpd_instance_namespace + " " + self.cpd_license
+            TR.info(methodName,"Install Data Virtualization with command %s"%install_dv_command)
             
-            install_wkc_retcode = ""
+            install_dv_retcode = ""
             try:
-                install_wkc_retcode = check_output(['bash','-c', install_wkc_command]) 
+                install_dv_retcode = check_output(['bash','-c', install_dv_command]) 
             except CalledProcessError as e:
                 TR.error(methodName,"command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))    
             
-            TR.info(methodName,"Install Data Virtualization with command %s returned %s"%(install_wkc_command,install_wkc_retcode))
+            TR.info(methodName,"Install Data Virtualization with command %s returned %s"%(install_dv_command,install_dv_retcode))
             
-            wkcend = Utilities.currentTimeMillis()
+            dvend = Utilities.currentTimeMillis()
             TR.info(methodName,"Install Data Virtualization completed")
-            self.printTime(wkcstart, wkcend, "Install Data Virtualization")    
+            self.printTime(dvstart, dvend, "Install Data Virtualization")    
 
 
         TR.info(methodName,"Installed all packages.")
