@@ -307,7 +307,7 @@ class CPDInstall(object):
             TR.info(methodName,"Start installing Db2WH") 
             db2wh_start = Utilities.currentTimeMillis()
             
-            install_db2wh_command  = "./install_db2wh.sh " + offline_installation_dir + " " + self.Db2WH_Case_Name  + " " + self.image_registry_url + " " + self.cpd_operator_namespace + " " + self.cpd_instance_namespace + " " + self.cpd_license + " " + self.storage_type + " " + self.storage_class
+            install_db2wh_command  = "./install_db2wh.sh " + offline_installation_dir + " " + self.Db2WH_Case_Name  + " " + self.image_registry_url + " " + self.foundation_service_namespace + " " + self.cpd_operator_namespace + " " + self.cpd_instance_namespace + " " + self.cpd_license + " " + self.storage_type + " " + self.storage_class
 
             TR.info(methodName,"Install Db2WH with command %s"%install_db2wh_command)
             
