@@ -79,7 +79,7 @@ sleep 1m
 ############Check Db2WH operator status Start################
 ######ibm-db2wh-cp4d-operator.v1.0.3 has to be changed for new release!!!!#########
 while true; do
-if oc get sub -n ${CPD_OPERATORS_NAMESPACE} ibm-db2wh-cp4d-operator-catalog-subscription -o jsonpath='{.status.installedCSV} {"\n"}' | grep ibm-cpd-Db2WH.v1.0.2 >/dev/null 2>&1; then
+if oc get sub -n ${CPD_OPERATORS_NAMESPACE} ibm-db2wh-cp4d-operator-catalog-subscription -o jsonpath='{.status.installedCSV} {"\n"}' | grep ibm-db2wh-cp4d-operator.v1.0.3 >/dev/null 2>&1; then
   echo -e "\nibm-db2wh-cp4d-operator.v1.0.3 was successfully created." >> ./logs/install_db2wh.log
   break
 fi
