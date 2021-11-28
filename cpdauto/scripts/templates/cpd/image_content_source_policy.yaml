@@ -16,3 +16,6 @@ spec:
   - mirrors:
     - PRIVATE_REGISTRY/cpopen
     source: icr.io/cpopen
+  - mirrors:
+    - ${PRIVATE_REGISTRY}/ibmcom
+    source: docker.io/ibmcom
