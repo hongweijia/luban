@@ -6,6 +6,14 @@ OFFLINEDIR=$1
 DB2AAS_CASE_PACKAGE_NAME=$2
 DB2U_CASE_PACKAGE_NAME=$3
 
+# # Clone yaml files from the templates
+if [[ $(type -t cp) == "alias" ]]
+then
+  unalias cp
+  echo "unalias cp completed."
+fi
+cp ./templates/cpd/db2u-sub.yaml db2u-sub.yaml
+
 mkdir -p ./logs
 touch ./logs/install_db2u.log
 echo '' > ./logs/install_db2u.log
