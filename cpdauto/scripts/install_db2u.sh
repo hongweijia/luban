@@ -5,6 +5,7 @@
 OFFLINEDIR=$1
 DB2AAS_CASE_PACKAGE_NAME=$2
 DB2U_CASE_PACKAGE_NAME=$3
+CPD_OPERATORS_NAMESPACE=$4
 
 # # Clone yaml files from the templates
 if [[ $(type -t cp) == "alias" ]]

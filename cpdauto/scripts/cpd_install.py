@@ -548,7 +548,7 @@ class CPDInstall(object):
         
         TR.info(methodName,"oc login successfully")
 
-        install_db2u_command  = "./install_db2u.sh " + self.offline_dir_path + " " + self.Db2aas_Case_Name + " " + self.Db2U_Case_Name 
+        install_db2u_command  = "./install_db2u.sh " + self.offline_dir_path + " " + self.Db2aas_Case_Name + " " + self.Db2U_Case_Name + " " + self.cpd_operator_namespace 
         #install_db2u_command  = "./install_db2u.sh " + self.offline_dir_path + " " + self.Db2U_Case_Name + " " + "ibm-db2aaservice-4.0.3.tgz"
 
         TR.info(methodName,"Installing Db2U with command %s"%install_db2u_command)
