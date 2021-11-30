@@ -26,11 +26,11 @@ mkdir -p ./logs
 touch ./logs/install_wkc.log
 echo '' > ./logs/install_wkc.log
 
-#install python2 related libs
-yum install -y python2
-unlink /usr/bin/python
-ln -s /usr/bin/python2 /usr/bin/python
-pip2 install pyyaml
+#install python3 related libs
+#yum install -y python3
+#unlink /usr/bin/python
+#ln -s /usr/bin/python3 /usr/bin/python
+pip3 install pyyaml
 
 # Create wkc catalog source 
 
@@ -46,9 +46,6 @@ cloudctl case launch \
 
 sleep 1m
 
-#change default python version to be python3
-unlink /usr/bin/python
-ln -s /usr/bin/python3 /usr/bin/python
 
 #edit the IBM Cloud Pak foundational services operand registry to point to the project where the Cloud Pak for Data operators are installed
 oc -n ${BEDROCK_NAMESPACE} get operandRegistry common-service -o yaml > operandRegistry.yaml
@@ -119,26 +116,26 @@ result=$(oc apply -f wkc-cr.yaml)
 echo $result >> ./logs/install_wkc.log
 
 ############Check WKC operator status Start################
-######v1.0.2 has to be changed for new release!!!!#########
+######v1.0.3 has to be changed for new release!!!!#########
 while true; do
-if oc get sub -n ${CPD_OPERATORS_NAMESPACE} ibm-cpd-wkc-operator-catalog-subscription -o jsonpath='{.status.installedCSV} {"\n"}' | grep ibm-cpd-wkc.v1.0.2 >/dev/null 2>&1; then
-  echo -e "\nibm-cpd-wkc.v1.0.2 was successfully created." >> ./logs/install_wkc.log
+if oc get sub -n ${CPD_OPERATORS_NAMESPACE} ibm-cpd-wkc-operator-catalog-subscription -o jsonpath='{.status.installedCSV} {"\n"}' | grep ibm-cpd-wkc.v1.0.3 >/dev/null 2>&1; then
+  echo -e "\nibm-cpd-wkc.v1.0.3 was successfully created." >> ./logs/install_wkc.log
   break
 fi
 sleep 10
 done
-######v1.0.2 has to be changed for new release!!!!#########
+######v1.0.3 has to be changed for new release!!!!#########
 while true; do
-if oc get csv -n ${CPD_OPERATORS_NAMESPACE} ibm-cpd-wkc.v1.0.2 -o jsonpath='{ .status.phase } : { .status.message} {"\n"}' | grep "Succeeded : install strategy completed with no errors" >/dev/null 2>&1; then
+if oc get csv -n ${CPD_OPERATORS_NAMESPACE} ibm-cpd-wkc.v1.0.3 -o jsonpath='{ .status.phase } : { .status.message} {"\n"}' | grep "Succeeded : install strategy completed with no errors" >/dev/null 2>&1; then
   echo -e "\nInstall strategy completed with no errors" >> ./logs/install_wkc.log
   break
 fi
 sleep 10
 done
-######v1.0.2 has to be changed for new release!!!!#########
+######v1.0.3 has to be changed for new release!!!!#########
 while true; do
-if oc get deployments -n ${CPD_OPERATORS_NAMESPACE} -l olm.owner="ibm-cpd-wkc.v1.0.2" -o jsonpath="{.items[0].status.availableReplicas} {'\n'}" | grep 1 >/dev/null 2>&1; then
-  echo -e "\nibm-cpd-wkc.v1.0.2 is ready." >> ./logs/install_wkc.log
+if oc get deployments -n ${CPD_OPERATORS_NAMESPACE} -l olm.owner="ibm-cpd-wkc.v1.0.3" -o jsonpath="{.items[0].status.availableReplicas} {'\n'}" | grep 1 >/dev/null 2>&1; then
+  echo -e "\nibm-cpd-wkc.v1.0.3 is ready." >> ./logs/install_wkc.log
   break
 fi
 sleep 10
@@ -203,26 +200,26 @@ done
 ############Check Db2u operator status End##################
 
 ############Check IIS operator status Start################
-######v1.0.2 has to be changed for new release!!!!#########
+######v1.0.3 has to be changed for new release!!!!#########
 while true; do
-if oc get sub -n ${CPD_OPERATORS_NAMESPACE} ibm-cpd-iis-operator -o jsonpath='{.status.installedCSV} {"\n"}' | grep ibm-cpd-iis.v1.0.2 >/dev/null 2>&1; then
-  echo -e "\nibm-cpd-iis.v1.0.2 was successfully created." >> ./logs/install_wkc.log
+if oc get sub -n ${CPD_OPERATORS_NAMESPACE} ibm-cpd-iis-operator -o jsonpath='{.status.installedCSV} {"\n"}' | grep ibm-cpd-iis.v1.0.3 >/dev/null 2>&1; then
+  echo -e "\nibm-cpd-iis.v1.0.3 was successfully created." >> ./logs/install_wkc.log
   break
 fi
 sleep 10
 done
-######v1.0.2 has to be changed for new release!!!!#########
+######v1.0.3 has to be changed for new release!!!!#########
 while true; do
-if oc get csv -n ${CPD_OPERATORS_NAMESPACE} ibm-cpd-iis.v1.0.2 -o jsonpath='{ .status.phase } : { .status.message} {"\n"}' | grep "Succeeded : install strategy completed with no errors" >/dev/null 2>&1; then
+if oc get csv -n ${CPD_OPERATORS_NAMESPACE} ibm-cpd-iis.v1.0.3 -o jsonpath='{ .status.phase } : { .status.message} {"\n"}' | grep "Succeeded : install strategy completed with no errors" >/dev/null 2>&1; then
   echo -e "\nInstall strategy completed with no errors" >> ./logs/install_wkc.log
   break
 fi
 sleep 10
 done
-######v1.0.2 has to be changed for new release!!!!#########
+######v1.0.3 has to be changed for new release!!!!#########
 while true; do
 if oc get deployments -n ${CPD_OPERATORS_NAMESPACE} -l olm.owner="ibm-cpd-iis.v1.0.2" -o jsonpath="{.items[0].status.availableReplicas} {'\n'}" | grep 1 >/dev/null 2>&1; then
-  echo -e "\nibm-cpd-iis.v1.0.2 is ready." >> ./logs/install_wkc.log
+  echo -e "\nibm-cpd-iis.v1.0.3 is ready." >> ./logs/install_wkc.log
   break
 fi
 sleep 10

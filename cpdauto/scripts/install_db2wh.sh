@@ -25,11 +25,11 @@ mkdir -p ./logs
 touch ./logs/install_db2wh.log
 echo '' > ./logs/install_db2wh.log
 
-#install python2 related libs
-yum install -y python2
-unlink /usr/bin/python
-ln -s /usr/bin/python2 /usr/bin/python
-pip2 install pyyaml
+#install python3 related libs
+#yum install -y python3
+#unlink /usr/bin/python
+#ln -s /usr/bin/python3 /usr/bin/python
+pip3 install pyyaml
 
 # Create Db2WH catalog source 
 
@@ -44,9 +44,6 @@ cloudctl case launch \
 
 sleep 1m
 
-#change default python version to be python3
-unlink /usr/bin/python
-ln -s /usr/bin/python3 /usr/bin/python
 
 #edit the IBM Cloud Pak foundational services operand registry to point to the project where the Cloud Pak for Data operators are installed
 oc -n ${BEDROCK_NAMESPACE} get operandRegistry common-service -o yaml > operandRegistry.yaml

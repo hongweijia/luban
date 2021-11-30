@@ -7,5 +7,5 @@ spec:
   license:
     accept: true
     license: CPD_LICENSE     # Specify the license you purchased
-  version: 1.7.2
+  version: 1.7.3
   size: "small"                     # Default size
