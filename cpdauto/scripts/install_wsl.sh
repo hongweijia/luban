@@ -64,6 +64,7 @@ if [[ ${STORAGE_TYPE} == "nfs" ]]
 then
   sed -i "/storageVendor/d" wsl-cr.yaml
 fi
+sed -i -e s#STORAGE_TYPE#${STORAGE_TYPE}#g wsl-cr.yaml
 
 result=$(oc apply -f wsl-cr.yaml)
 echo $result >> ./logs/install_wsl.log
