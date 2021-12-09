@@ -155,7 +155,7 @@ class CPDInstall(object):
 
             zen_start = Utilities.currentTimeMillis()
             
-            install_control_plane_command  = "./install_zen.sh " + offline_installation_dir + " " + self.CPDControlPlane_Case_Name  + " " + self.image_registry_url + " " + self.foundation_service_namespace + " " + self.cpd_operator_namespace + " " + self.cpd_instance_namespace + " " + self.cpd_license + " " + self.storage_class + " " + zen_core_metadb_storage_class
+            install_control_plane_command  = "./install_zen.sh " + offline_installation_dir + " " + self.CPDControlPlane_Case_Name  + " " + self.image_registry_url + " " + self.foundation_service_namespace + " " + self.cpd_operator_namespace + " " + self.cpd_instance_namespace + " " + self.cpd_license + " " + self.storage_class + " " + self.storage_type
 
             TR.info(methodName,"Install Control Plane with command %s"%install_control_plane_command)
             

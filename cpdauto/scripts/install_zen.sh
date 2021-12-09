@@ -9,7 +9,7 @@ CPD_OPERATORS_NAMESPACE=$5
 CPD_INSTANCE_NAMESPACE=$6
 CPD_LICENSE=$7
 STORAGE_CLASS=$8
-ZEN_CORE_METADB_STORAGE_CLASS=$9
+STORAGE_TYPE=$9
 
 # # Clone yaml files from the templates
 if [[ $(type -t cp) == "alias" ]]
@@ -128,8 +128,15 @@ oc patch NamespaceScope cpd-operators -n ${CPD_OPERATORS_NAMESPACE} --type=merge
 # Create lite CR: 
 sed -i -e s#CPD_INSTANCE_NAMESPACE#${CPD_INSTANCE_NAMESPACE}#g ibmcpd-cr.yaml
 sed -i -e s#CPD_LICENSE#${CPD_LICENSE}#g ibmcpd-cr.yaml
-sed -i -e s#ZEN_CORE_METADB_STORAGE_CLASS#${ZEN_CORE_METADB_STORAGE_CLASS}#g ibmcpd-cr.yaml
+sed -i -e s#STORAGE_TYPE#${STORAGE_TYPE}#g ibmcpd-cr.yaml
 sed -i -e s#STORAGE_CLASS#${STORAGE_CLASS}#g ibmcpd-cr.yaml
+
+if [[ ${STORAGE_TYPE} == "nfs" ]]
+then
+  sed -i "/storageVendor/d" ibmcpd-cr.yaml
+else
+  sed -i "/storageClass/d" ibmcpd-cr.yaml
+fi
 
 echo '*** executing **** oc create -f ibmcpd-cr.yaml' >> ./logs/install_cpd_platform.log
 result=$(oc create -f ibmcpd-cr.yaml)
