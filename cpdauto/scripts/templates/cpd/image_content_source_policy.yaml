@@ -19,3 +19,6 @@ spec:
   - mirrors:
     - PRIVATE_REGISTRY/ibmcom
     source: docker.io/ibmcom
+  - mirrors:
+    - PRIVATE_REGISTRY/db2u
+    source: icr.io/db2u
