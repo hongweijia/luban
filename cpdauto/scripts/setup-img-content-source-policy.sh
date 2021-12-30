@@ -22,4 +22,4 @@ for p in $(oc get imagecontentsourcepolicy | grep cloud-pak-for-data-mirror| awk
 echo '*** executing **** oc apply -f image_content_source_policy.yaml' >> ./logs/setup-img-content-source-policy.log
 result=$(oc apply -f image_content_source_policy.yaml)
 echo $result >> ./logs/setup-img-content-source-policy.log
-sleep 15m
+#sleep 15m

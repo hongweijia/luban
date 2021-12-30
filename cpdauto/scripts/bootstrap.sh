@@ -2,11 +2,10 @@
 
 
 ##### "Main" starts here
-SCRIPT=${0##*/}
+#SCRIPT=${0##*/}
 
-echo $SCRIPT
+#echo $SCRIPT
 
-#cd /ibm
 # Make sure there is a "logs" directory in the current directory
 if [ ! -d "${PWD}/logs" ]; then
   mkdir logs
@@ -19,11 +18,11 @@ if [ ! -d "${PWD}/logs" ]; then
   fi
 fi
 
-LOGFILE="${PWD}/logs/${SCRIPT%.*}.log"
+#LOGFILE="${PWD}/logs/${SCRIPT%.*}.log"
 
 mkdir -p templates
 chmod +x ${PWD}/*
 #chmod +x ${PWD}/cpd_install.py
-echo $HOME
+#echo $HOME
 #echo $PATH
 ${PWD}/cpd_install.py
