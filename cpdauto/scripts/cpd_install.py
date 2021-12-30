@@ -345,17 +345,18 @@ class CPDInstall(object):
                     self.printTime(ocpstart, ocpend, "Configuring image pull")
                 ocpstart = Utilities.currentTimeMillis()
                 
+                if(self.installWKC == "True"):
+                    self.installDb2U == "True"
+                    self.configWKCSCC(icpdInstallLogFile)
+                    TR.info("debug","Finishd the config of WKC SCC")
+                    ocpend = Utilities.currentTimeMillis()
+                    self.printTime(ocpstart, ocpend, "Configuring WKC SCC") 
+                
                 if(self.installDb2U == "True"):
                     self.configDb2Kubelet(icpdInstallLogFile)
                     TR.info("debug","Finishd the config of Db2 Kubelete")
                     ocpend = Utilities.currentTimeMillis()
                     self.printTime(ocpstart, ocpend, "Configuring Db2 Kubelete")
-
-                if(self.installWKC == "True"):
-                    self.configWKCSCC(icpdInstallLogFile)
-                    TR.info("debug","Finishd the config of WKC SCC")
-                    ocpend = Utilities.currentTimeMillis()
-                    self.printTime(ocpstart, ocpend, "Configuring WKC SCC")
                 
                 self.installStatus = "CPD node settings and configuration completed"
                 TR.info("debug","Installation status - %s" %self.installStatus)
