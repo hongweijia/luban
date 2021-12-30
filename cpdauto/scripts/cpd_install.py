@@ -299,7 +299,7 @@ class CPDInstall(object):
         self.installDb2U = config['cpd_assembly']['installDb2U'].strip()
         self.cpd_instance_namespace = config['cpd_assembly']['cpd_instance_namespace'].strip()
         TR.info(methodName,"Load installation configuration completed")
-        TR.info(methodName,"Installation configuration:" + self.ocp_admin_user + "-" + self.ocp_admin_password  + "-" + self.installer_path)      
+        TR.info(methodName,"Installation configuration:" + self.ocp_admin_user + "-" + self.ocp_admin_password)      
         TR.info("debug","image_registry_url= %s" %self.image_registry_url)
         TR.info("debug","image_registry_user= %s" %self.image_registry_user)
         TR.info("debug","image_registry_password= %s" %self.image_registry_password)
