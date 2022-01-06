@@ -31,7 +31,7 @@ yum install openssl httpd-tools podman skopeo git jq tmux -y
 tar -xf cloudctl-linux-amd64.tar.gz
 cp cloudctl-linux-amd64 /usr/bin/cloudctl
  
-tmux 
+tmux </br>
 2.Set up private image registry
 #The OFFLINEDIR has to be changed accordingly </br>
 export OFFLINEDIR=/data/offline/cpd </br>
@@ -49,17 +49,17 @@ cloudctl case launch --case ${OFFLINEDIR}/ibm-cp-datacore-2.0.8.tgz --inventory 
 
 cloudctl case launch --case ${OFFLINEDIR}/ibm-cp-datacore-2.0.8.tgz --inventory cpdPlatformOperator --action start-registry --args "--port ${PRIVATE_REGISTRY_PORT} --dir ${OFFLINEDIR}/imageregistry --image docker.io/library/registry:2.7" </br>
 
-3. Pre-check
-1)Image registry
-podman login --username $PRIVATE_REGISTRY_USER --password $PRIVATE_REGISTRY_PASSWORD $PRIVATE_REGISTRY --tls-verify=false
+3. Pre-check </br>
+1)Image registry </br>
+podman login --username $PRIVATE_REGISTRY_USER --password $PRIVATE_REGISTRY_PASSWORD $PRIVATE_REGISTRY --tls-verify=false </br>
 
-curl -k -u ${PRIVATE_REGISTRY_USER}:${PRIVATE_REGISTRY_PASSWORD} https://${PRIVATE_REGISTRY}/v2/_catalog?n=6000 | jq .
+curl -k -u ${PRIVATE_REGISTRY_USER}:${PRIVATE_REGISTRY_PASSWORD} https://${PRIVATE_REGISTRY}/v2/_catalog?n=6000 | jq . </br>
 
-2)Check case names
-ls $OFFLINEDIR
+2)Check case names </br>
+ls $OFFLINEDIR </br>
 
-3)Check python
-ls /usr/bin/python
+3)Check python </br>
+ls /usr/bin/python </br>
 
 Make sure  python 3 are installed.
 
