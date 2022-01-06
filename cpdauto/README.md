@@ -111,5 +111,3 @@ oc get ZenService lite-cr -o jsonpath="{.status.url}{'\n'}"
  
 Get the initial password for the admin user:
 oc extract secret/admin-user-details --keys=initial_admin_password --to=-
-
-![image](https://user-images.githubusercontent.com/13843422/148342556-a17fc145-8e9a-410a-b384-99ad9ce5dfcb.png)
