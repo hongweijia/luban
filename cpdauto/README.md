@@ -33,21 +33,21 @@ cp cloudctl-linux-amd64 /usr/bin/cloudctl
  
 tmux 
 2.Set up private image registry
-#The OFFLINEDIR has to be changed accordingly
-export OFFLINEDIR=/data/offline/cpd
-#PRIVATE_REGISTRY_HOST  and port needs to be changed to the Bastion node IP/Hostname
-export PRIVATE_REGISTRY_HOST=xxx
-export PRIVATE_REGISTRY_PORT=5000
-export PRIVATE_REGISTRY=$PRIVATE_REGISTRY_HOST:$PRIVATE_REGISTRY_PORT
-#The port has to be changed accordingly
-export PRIVATE_REGISTRY_USER=admin
-export PRIVATE_REGISTRY_PASSWORD=password
-export PRIVATE_REGISTRY_PATH=$OFFLINEDIR/imageregistry
-export CLOUDCTL_TRACE=true # for extra logging
+#The OFFLINEDIR has to be changed accordingly </br>
+export OFFLINEDIR=/data/offline/cpd </br>
+#PRIVATE_REGISTRY_HOST  and port needs to be changed to the Bastion node IP/Hostname </br>
+export PRIVATE_REGISTRY_HOST=xxx </br>
+export PRIVATE_REGISTRY_PORT=5000 </br>
+export PRIVATE_REGISTRY=$PRIVATE_REGISTRY_HOST:$PRIVATE_REGISTRY_PORT </br>
+#The port has to be changed accordingly </br>
+export PRIVATE_REGISTRY_USER=admin </br>
+export PRIVATE_REGISTRY_PASSWORD=password </br>
+export PRIVATE_REGISTRY_PATH=$OFFLINEDIR/imageregistry </br>
+export CLOUDCTL_TRACE=true # for extra logging </br>
 
-cloudctl case launch --case ${OFFLINEDIR}/ibm-cp-datacore-2.0.8.tgz --inventory cpdPlatformOperator --action init-registry --args "--registry ${PRIVATE_REGISTRY_HOST} --user ${PRIVATE_REGISTRY_USER} --pass ${PRIVATE_REGISTRY_PASSWORD} --dir ${OFFLINEDIR}/imageregistry"
+cloudctl case launch --case ${OFFLINEDIR}/ibm-cp-datacore-2.0.8.tgz --inventory cpdPlatformOperator --action init-registry --args "--registry ${PRIVATE_REGISTRY_HOST} --user ${PRIVATE_REGISTRY_USER} --pass ${PRIVATE_REGISTRY_PASSWORD} --dir ${OFFLINEDIR}/imageregistry" </br>
 
-cloudctl case launch --case ${OFFLINEDIR}/ibm-cp-datacore-2.0.8.tgz --inventory cpdPlatformOperator --action start-registry --args "--port ${PRIVATE_REGISTRY_PORT} --dir ${OFFLINEDIR}/imageregistry --image docker.io/library/registry:2.7"
+cloudctl case launch --case ${OFFLINEDIR}/ibm-cp-datacore-2.0.8.tgz --inventory cpdPlatformOperator --action start-registry --args "--port ${PRIVATE_REGISTRY_PORT} --dir ${OFFLINEDIR}/imageregistry --image docker.io/library/registry:2.7" </br>
 
 3. Pre-check
 1)Image registry
