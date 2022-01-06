@@ -32,7 +32,7 @@ tar -xf cloudctl-linux-amd64.tar.gz
 cp cloudctl-linux-amd64 /usr/bin/cloudctl
  
 tmux </br>
-2.Set up private image registry
+2.Set up private image registry </br>
 #The OFFLINEDIR has to be changed accordingly </br>
 export OFFLINEDIR=/data/offline/cpd </br>
 #PRIVATE_REGISTRY_HOST  and port needs to be changed to the Bastion node IP/Hostname </br>
