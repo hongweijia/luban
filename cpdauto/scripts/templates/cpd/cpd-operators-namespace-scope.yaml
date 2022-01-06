@@ -1,0 +1,11 @@
+apiVersion: operator.ibm.com/v1
+kind: NamespaceScope
+metadata:
+  name: cpd-operators
+  namespace: CPD_OPERATORS_NAMESPACE       # (Default) Replace with the Cloud Pak for Data platform operator project name 
+spec:
+  csvInjector:                    
+    enable: true
+  namespaceMembers:
+  - CPD_OPERATORS_NAMESPACE                # (Default) Replace with the Cloud Pak for Data platform operator project name
+  - CPD_INSTANCE_NAMESPACE                  # Replace with the project where you will install Cloud Pak for Data

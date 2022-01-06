@@ -1,4 +1,4 @@
-This is the introduction about how to use Cloud Pak for Data Installation Accelerator to accelerate the deployment of Cloud Pak for Data in in various scenarios.
+This is the introduction about how to use Cloud Pak for Data Installation Accelerator to accelerate the deployment of Cloud Pak for Data 4.0.3 Air-gapped environment.
 
 # Values
 * Avoid human errors
@@ -7,100 +7,107 @@ This is the introduction about how to use Cloud Pak for Data Installation Accele
 
 # Scenarios
 * Scenarios supported </br>
-Install CPD 3.5 with the Portworx, OCS or NFS.
-# Prequisites
-The following prequisites have been met.
-* OpenShift 4.5/4.6 cluster with a cluster admin user is available
-* OpenShift image registry has been set up
-* The Portworx, OCS or NFS storage class is ready
-* CPD installer and installation files downloaded
-https://www.ibm.com/docs/en/cloud-paks/cp-data/3.5.0?topic=tasks-obtaining-installation-files
-* python3 and pip have been installed
-* Precheck has been done and passed successfully
+Install CPD 4.0.3 with the Portworx, OCS or NFS.
 
 # Key artifacts
 * Installation configure file
 * Templates for changing node settings
-* Python scripts
+* Python and shell scripts
+
+# Prequisites
+The following prequisites have been met.
+* OpenShift 4.8 cluster with a cluster admin user is available
+* Cloud Pak for Data Cases and images have been downloaded
+* docker.io/library/registry:2.7 image prepared and the private image registry has been set up
+* The Portworx, OCS or NFS storage class is ready
+* #CLOUDCTL downloaded by wget https://github.com/IBM/cloud-pak-cli/releases/download/v3.12.0/cloudctl-linux-amd64.tar.gz
+* Download the luban-cpd-403.zip from this git repository https://github.com/hongweijia/luban/tree/cpd-403
 
 # Step by step guide
 The following procedures are supposed to run in the Bastion node.
 
-## 1.Precheck
-https://github.com/IBM-ICP4D/Install_Precheck_CPD_v3
+1.Install required tools and libraries
+yum install openssl httpd-tools podman skopeo git jq tmux -y
+tar -xf cloudctl-linux-amd64.tar.gz
+cp cloudctl-linux-amd64 /usr/bin/cloudctl
+ 
+tmux </br>
 
-## 2.Install tools and libs
-* yum install -y python3
-* ln -s /usr/bin/python3 /usr/bin/python
-* ln -s /usr/bin/pip3 /usr/bin/pip
-* pip install ./cpdauto/packages/configparser-4.0.2-py2.py3-none-any.whl
-* cp ./cpdauto/packages/jq-linux64 /usr/bin/jq
+2.Set up private image registry </br>
 
-[Installing Python and packages on an Offline Machine: A Comprehensive Guide](https://stackoverflow.com/questions/56853876/installing-python-2-7-16-and-packages-offline-concerns-with-dependencies)
+#The OFFLINEDIR has to be changed accordingly </br>
+export OFFLINEDIR=/data/offline/cpd </br>
+#PRIVATE_REGISTRY_HOST  and port needs to be changed to the Bastion node IP/Hostname </br>
+export PRIVATE_REGISTRY_HOST=xxx </br>
+export PRIVATE_REGISTRY_PORT=5000 </br>
+export PRIVATE_REGISTRY=$PRIVATE_REGISTRY_HOST:$PRIVATE_REGISTRY_PORT </br>
+#The port has to be changed accordingly </br>
+export PRIVATE_REGISTRY_USER=admin </br>
+export PRIVATE_REGISTRY_PASSWORD=password </br>
+export PRIVATE_REGISTRY_PATH=$OFFLINEDIR/imageregistry </br>
+export CLOUDCTL_TRACE=true # for extra logging </br>
 
-## 3. Create the log directory
+cloudctl case launch --case ${OFFLINEDIR}/ibm-cp-datacore-2.0.8.tgz --inventory cpdPlatformOperator --action init-registry --args "--registry ${PRIVATE_REGISTRY_HOST} --user ${PRIVATE_REGISTRY_USER} --pass ${PRIVATE_REGISTRY_PASSWORD} --dir ${OFFLINEDIR}/imageregistry" </br>
+
+cloudctl case launch --case ${OFFLINEDIR}/ibm-cp-datacore-2.0.8.tgz --inventory cpdPlatformOperator --action start-registry --args "--port ${PRIVATE_REGISTRY_PORT} --dir ${OFFLINEDIR}/imageregistry --image docker.io/library/registry:2.7" </br>
+
+3. Pre-check </br>
+
+1)Image registry </br>
+podman login --username $PRIVATE_REGISTRY_USER --password $PRIVATE_REGISTRY_PASSWORD $PRIVATE_REGISTRY --tls-verify=false </br>
+
+curl -k -u ${PRIVATE_REGISTRY_USER}:${PRIVATE_REGISTRY_PASSWORD} https://${PRIVATE_REGISTRY}/v2/_catalog?n=6000 | jq . </br>
+
+2)Check case names </br>
+ls $OFFLINEDIR </br>
+
+3)Check python </br>
+ls /usr/bin/python </br>
+
+Make sure  python 3 are installed.
+
+4)Check OCP status
+oc get co
+oc get nodes
+oc get mcp
+
+4. Configure the installation accelerator
+
+mkdir /ibm
+cd /ibm
+
+#Assume you placed the luban-cpd-403.zip to /ibm folder
+unzip luban-cpd-403.zip
+ 
+yum install python3 jq -y
+
+ln -s /usr/bin/python3 /usr/bin/python
+
 mkdir -p /ibm/logs
 
-## 4.Cluster settings
-### Timeout settings for OpenShift image registry
-`oc annotate route default-route default-route --overwrite haproxy.router.openshift.io/timeout=10m -n openshift-image-registry`
+cd /ibm/luban/cpdauto/
 
-### Load balancer timeout settings
-As the load balancer have several options and sometimes it's not available to operate them directly, so the manual work is still needed.
-[Load balancer timeout settings](https://www.ibm.com/docs/en/cloud-paks/cp-data/3.5.0?topic=tasks-changing-required-node-settings#node-settings__lb-proxyhttps://www.ibm.com/docs/en/cloud-paks/cp-data/3.5.0?topic=tasks-changing-required-node-settings#node-settings__lb-proxy)
+#This step is important. 
+Especially double confirm  the [ocp_cred] , [image_registry], storage_type and storage_class are changed accordingly
 
-### Prepare the Node setting templates
-**CRI-O container settings**<br/>
-On Red Hat OpenShift version 4.5/4.6, Machine Config Pools manage your cluster of nodes and their corresponding Machine Configs (machineconfig). To change a setting in the crio.conf file, you can create a new machineconfig containing only the crio.conf file.
+vi cpd_install.conf
 
-copy the crio.conf settings from a worker node by running the scp command from the worker node. Run this command from a terminal within the cluster network to make sure that you do not override an existing manual configuration. <br/>
-`scp core@$(oc get nodes | grep worker | head -1 | awk '{print $1}'):/etc/crio/crio.conf /tmp/crio.conf`
+5. Launch the auto installation with the installation accelerator
+#Launch the installation
+cd /ibm/luban/cpdauto/scripts
+./bootstrap.sh
 
-Verify that /tmp/crio.conf looks like the template https://github.com/IBM/luban/blob/main/cpdauto/scripts/templates/cpd/crio.conf. If not, edit or add the following entries about **default_ulimits** and **pids_limit** in the **[crio.runtime]** section of the /tmp/crio.conf file.
+6.Post-config
+The timeout settings for the ha-proxy load balancer
 
-`sed -i 's/pids_limit.*/pids_limit = 12290\ndefault_ulimits = [\n\ \ \ \ "nofile=66560:66560"\n]/g' /tmp/crio.conf`
+sed -i -e "/timeout client/s/ [0-9].*/ 5m/" /etc/haproxy/haproxy.cfg
+sed -i -e "/timeout server/s/ [0-9].*/ 5m/" /etc/haproxy/haproxy.cfg
+systemctl restart haproxy
+systemctl status haproxy
+cat /etc/haproxy/haproxy.cfg | grep timeout
 
-After the verification passed, move the `/tmp/crio.conf` file to the folder `**cpdauto/scripts/templates/cpd/**`.
-
-## 5.Configure your installation
-Please refer to the template cpd_install.conf and update accordingly.
-https://github.com/IBM/luban/blob/main/cpdauto/cpd_install.conf
-
-## 6.Launch the installation
-`cd ./cpdauto/scripts`<br/>
-`chmod +x ./bootstrap.sh`<br/>
-`nohup ./bootstrap.sh &`
-
-## 7.Monitor the installation
-### Overview
-Check the log file overall_log_file that you specified in cpd_install.conf. <br/>
-Or run the following command:
-`watch -n 10 "tail -n 10 nohup.out"`
-### Details
-There will be logs corresponding to the push, apply and install commands for each assembly.
-`ls /ibm/logs/`
-Check the log for details.
-
-## 8.Validate the installation status
-### Check the installed assembly's status
-`cpd-linux status -n yournamespace`
-
-## 9.Troubleshooting
-If the auto installation failed, you can do the troubleshooting as follows.
-### 1)Check the logs as mentioned in Step 7
-### 2)Check the logs of cpd-install-operator
-`oc logs $(oc get po | grep cpd-install-operator | awk '{print }')`
-### 3)Check if some pods failed to start up during the installation
-`oc get po --no-headers --all-namespaces -o wide| grep -Ev '([[:digit:]])/\1.*R' | grep -v 'Completed'`
-### 4)Switch to the manual installation
-If the auto installation keeps failing, then there maybe something wrong with the environment and it's better handle the installation manually.
-
-
-
-
-
-
-
-
-
-
+7.Get the URL of the Cloud Pak for Data web client:
+oc get ZenService lite-cr -o jsonpath="{.status.url}{'\n'}"
+ 
+Get the initial password for the admin user:
+oc extract secret/admin-user-details --keys=initial_admin_password --to=-

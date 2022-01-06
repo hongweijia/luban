@@ -1,0 +1,11 @@
+apiVersion: cpd.ibm.com/v1
+kind: Ibmcpd
+metadata:
+  name: ibmcpd-cr
+  namespace: CPD_INSTANCE_NAMESPACE
+spec:
+  license:
+    accept: true
+    license: CPD_LICENSE
+  storageVendor: STORAGE_TYPE
+  storageClass: STORAGE_CLASS

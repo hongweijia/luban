@@ -1,0 +1,9 @@
+apiVersion: databases.cpd.ibm.com/v1
+kind: Db2whService
+metadata:
+  name: db2wh-cr     # This is the recommended name, but you can change it
+  namespace: CPD_INSTANCE_NAMESPACE     # Replace with the project where you will install Db2 Warehouse
+spec:
+  license:
+    accept: true
+    license: CPD_LICENSE     # Specify the license you purchased

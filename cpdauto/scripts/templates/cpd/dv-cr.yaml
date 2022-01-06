@@ -1,0 +1,11 @@
+apiVersion: db2u.databases.ibm.com/v1
+kind: DvService
+metadata:
+  name: dv-service     # This is the recommended name, but you can change it
+  namespace: CPD_INSTANCE_NAMESPACE     # Replace with the project where you will install Data Virtualization
+spec:
+  license:
+    accept: true
+    license: CPD_LICENSE     # Specify the license you purchased
+  version: 1.7.3
+  size: "small"                     # Default size

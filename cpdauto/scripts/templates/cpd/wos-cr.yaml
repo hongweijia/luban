@@ -1,0 +1,13 @@
+apiVersion: wos.cpd.ibm.com/v1
+kind: WOService
+metadata:
+  name: aiopenscale     # This is the recommended name, but you can change it
+  namespace: CPD_INSTANCE_NAMESPACE     # Replace with the project where you will install Watson OpenScale
+spec:
+  scaleConfig: small   # The default value is `small`, but you can scale up to `medium`
+  license:
+    accept: true
+    license: CPD_LICENSE     # Specify the license you purchased
+  version: 4.0.2
+  type: service
+  storageClass: STORAGE_CLASS     # See the guidance in "Information you need to complete this task"

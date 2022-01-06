@@ -1,0 +1,24 @@
+apiVersion: operator.openshift.io/v1alpha1
+kind: ImageContentSourcePolicy
+metadata:
+  name: cloud-pak-for-data-mirror
+spec:
+  repositoryDigestMirrors:
+  - mirrors:
+    - PRIVATE_REGISTRY/opencloudio
+    source: quay.io/opencloudio
+  - mirrors:
+    - PRIVATE_REGISTRY/cp
+    source: cp.icr.io/cp
+  - mirrors:
+    - PRIVATE_REGISTRY/cp/cpd
+    source: cp.icr.io/cp/cpd
+  - mirrors:
+    - PRIVATE_REGISTRY/cpopen
+    source: icr.io/cpopen
+  - mirrors:
+    - PRIVATE_REGISTRY/ibmcom
+    source: docker.io/ibmcom
+  - mirrors:
+    - PRIVATE_REGISTRY/db2u
+    source: icr.io/db2u

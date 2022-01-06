@@ -1,0 +1,12 @@
+apiVersion: ws.cpd.ibm.com/v1beta1
+kind: WS
+metadata:
+  name: ws-cr     # This is the recommended name, but you can change it
+  namespace: CPD_INSTANCE_NAMESPACE     # Replace with the project where you will install Watson Studio
+spec:
+  license:
+    accept: true
+    license: CPD_LICENSE     # Specify the license you purchased
+  version: 4.0.3
+  storageVendor: STORAGE_TYPE
+  storageClass: STORAGE_CLASS          #if you use a different storage class, replace it with the appropriate storage class

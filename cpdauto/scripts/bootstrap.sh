@@ -22,7 +22,8 @@ fi
 LOGFILE="${PWD}/logs/${SCRIPT%.*}.log"
 
 mkdir -p templates
-chmod +x ${PWD}/cpd_install.py
+chmod +x ${PWD}/*
+#chmod +x ${PWD}/cpd_install.py
 echo $HOME
 #echo $PATH
 ${PWD}/cpd_install.py

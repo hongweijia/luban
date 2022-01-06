@@ -1,0 +1,11 @@
+apiVersion: cde.cpd.ibm.com/v1
+kind: CdeProxyService
+metadata:
+  name: cdeproxyservice-cr     # This is the recommended name, but you can change it
+  namespace: CPD_INSTANCE_NAMESPACE     # Replace with the project where you will install Cognos Dashboards
+spec:
+  license:
+    accept: true
+    license: CPD_LICENSE     # Specify the license you purchased
+  version: 4.0.3
+  storageClass: STORAGE_CLASS     # See the guidance in "Information you need to complete this task"

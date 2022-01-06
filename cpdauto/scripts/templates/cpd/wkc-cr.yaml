@@ -1,0 +1,15 @@
+apiVersion: wkc.cpd.ibm.com/v1beta1
+kind: WKC
+metadata:
+  name: wkc-cr     # This is the recommended name, but you can change it
+  namespace: CPD_INSTANCE_NAMESPACE     # Replace with the project where you will install Watson Knowledge Catalog
+spec:
+  license:
+    accept: true
+    license: CPD_LICENSE     # Specify the license you purchased
+  version: 4.0.3
+  storageVendor: STORAGE_TYPE
+  storageClass: STORAGE_CLASS          #if you use a different storage class, replace 
+  # wkc_db2u_set_kernel_params: True
+  # iis_db2u_set_kernel_params: True
+  # install_wkc_core_only: true     # To install the core version of the service, remove the comment tagging from the beginning of the line.

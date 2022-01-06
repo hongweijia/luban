@@ -1,0 +1,8 @@
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: operatorgroup
+  namespace: CPD_OPERATORS_NAMESPACE
+spec:
+  targetNamespaces:
+  - CPD_OPERATORS_NAMESPACE
