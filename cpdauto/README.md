@@ -32,7 +32,9 @@ tar -xf cloudctl-linux-amd64.tar.gz
 cp cloudctl-linux-amd64 /usr/bin/cloudctl
  
 tmux </br>
+
 2.Set up private image registry </br>
+
 #The OFFLINEDIR has to be changed accordingly </br>
 export OFFLINEDIR=/data/offline/cpd </br>
 #PRIVATE_REGISTRY_HOST  and port needs to be changed to the Bastion node IP/Hostname </br>
@@ -50,6 +52,7 @@ cloudctl case launch --case ${OFFLINEDIR}/ibm-cp-datacore-2.0.8.tgz --inventory 
 cloudctl case launch --case ${OFFLINEDIR}/ibm-cp-datacore-2.0.8.tgz --inventory cpdPlatformOperator --action start-registry --args "--port ${PRIVATE_REGISTRY_PORT} --dir ${OFFLINEDIR}/imageregistry --image docker.io/library/registry:2.7" </br>
 
 3. Pre-check </br>
+
 1)Image registry </br>
 podman login --username $PRIVATE_REGISTRY_USER --password $PRIVATE_REGISTRY_PASSWORD $PRIVATE_REGISTRY --tls-verify=false </br>
 
