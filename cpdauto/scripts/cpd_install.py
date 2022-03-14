@@ -683,7 +683,7 @@ class CPDInstall(object):
                 try:
                     self.ocToken = check_output(['bash','-c', getTokenCmd])
                     self.ocToken = self.ocToken.strip('\n'.encode('ascii'))
-                    TR.info(methodName,"Completed %s command with return value (encoded) %s" %(getTokenCmd,base64.b64encode(self.ocToken))
+                    #TR.info(methodName,"Completed %s command with return value (encoded) %s" %(getTokenCmd,base64.b64encode(self.ocToken))
                 except CalledProcessError as e:
                     TR.error(methodName,"command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))
 
