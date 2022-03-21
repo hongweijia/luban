@@ -693,10 +693,10 @@ class CPDInstall(object):
                 TR.info("debug","Installation status - %s" %self.installStatus)
 
 
-                self.validateInstall(icpdInstallLogFile)
+                #self.validateInstall(icpdInstallLogFile)
 
 
-                self.installStatus = "Finished validating installation"
+                #self.installStatus = "Finished validating installation"
                 TR.info("debug","Installation status - %s" %self.installStatus)
 
             #endWith    
