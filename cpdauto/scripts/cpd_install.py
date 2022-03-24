@@ -402,6 +402,22 @@ class CPDInstall(object):
         TR.info(methodName,"  Completed node settings of Openshift Container Platform")
     #endDef
 
+    def annonateRegistryRoute(self, icpdInstallLogFile):
+        methodName = "annonateRegistryRoute"
+        TR.info(methodName,"Start annonating the route of the internal image registry of Openshift Container Platform")  
+
+        annonation_cmd =  "oc annotate route default-route default-route --overwrite haproxy.router.openshift.io/timeout=10m -n openshift-image-registry"
+        TR.info(methodName,"Annonate the image registry route for mitigating the time out issue")
+        try:
+            retcode = check_output(['bash','-c', annonation_cmd]) 
+            TR.info(methodName,"Annonated the image registry route %s" %retcode)  
+        except CalledProcessError as e:
+            TR.error(methodName,"command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))  
+        time.sleep(10)
+
+        TR.info(methodName," Completed the annonatation of the route of the internal image registry of Openshift Container Platform")
+    #endDef
+
     def updateTemplateFile(self, source, placeHolder, value):
         """
         method to update placeholder values in templates
@@ -687,6 +703,8 @@ class CPDInstall(object):
                 except CalledProcessError as e:
                     TR.error(methodName,"command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))
 
+                self.annonateRegistryRoute(icpdInstallLogFile)
+                
                 self.installCPD(icpdInstallLogFile)
                 
                 self.installStatus = "CPD Installation completed"
